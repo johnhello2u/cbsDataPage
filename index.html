@@ -1,10 +1,35 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Simple Animation Page</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <p>hello there!</p>
+    <div class="container">
+        <h1>Welcome to the Animated Page!</h1>
+        <p>Click the button to animate the box below</p>
+        <button id="animateBtn">Animate Box</button>
+        
+        <!-- The animated box -->
+        <div class="box" id="box"></div>
+    </div>
+
+    <script>
+        // JavaScript to handle the animation
+        document.getElementById("animateBtn").addEventListener("click", function() {
+            var box = document.getElementById("box");
+            
+            // Toggle the animation class
+            if (box.classList.contains("animate-box")) {
+                box.classList.remove("animate-box");
+            } else {
+                box.classList.add("animate-box");
+            }
+        });
+
+
+    </script>
 </body>
 </html>
