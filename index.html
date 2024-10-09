@@ -7,27 +7,70 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Welcome to the Animated Page!</h1>
-        <p>Click the button to animate the box below</p>
-        <button id="animateBtn">Animate Box</button>
-        
-        <!-- The animated box -->
-        <div class="box" id="box"></div>
-    </div>
+    <h1>Fetched Table Data</h1>
+
+    <table id="dataTable">
+        <thead>
+            <tr>
+                <th>Period</th>
+                <th>CPI</th>
+                <th>CPI Afgeleid</th>
+                <th>Jaarmutatie CPI</th>
+                <th>Jaarmutatie CPI Afgeleid</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
 
     <script>
-        // JavaScript to handle the animation
-        document.getElementById("animateBtn").addEventListener("click", function() {
-            var box = document.getElementById("box");
+        async function fetchTableData() {
+        const url = 'https://opendata.cbs.nl/statline/#/CBS/nl/dataset/83131ned/table?fromstatweb';  // Replace with the actual URL
+        try {
+            // Fetch the page's HTML
+            const response = await fetch(url);
+            const text = await response.text();
             
-            // Toggle the animation class
-            if (box.classList.contains("animate-box")) {
-                box.classList.remove("animate-box");
-            } else {
-                box.classList.add("animate-box");
-            }
-        });
+            // Create a DOM parser to extract HTML content
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(text, 'text/html');
+
+            // Select the specific table element
+            const table = doc.querySelector('.pvtTable tbody');
+
+            // Get the table's rows
+            const rows = table.querySelectorAll('tr');
+
+            // Create a variable to hold the extracted data
+            let tableData = '';
+
+            // Loop through each row
+            rows.forEach(row => {
+                const period = row.querySelector('.pvtRowLabel div').innerText;
+                const cpi = row.querySelector('.col0').innerText;
+                const cpiAfgeleid = row.querySelector('.col1').innerText;
+                const jaarmutatieCPI = row.querySelector('.col2').innerText;
+                const jaarmutatieCPIAfgeleid = row.querySelector('.col3').innerText;
+
+                // Add extracted row data to the tableData variable
+                tableData += `<tr>
+                                <td>${period}</td>
+                                <td>${cpi}</td>
+                                <td>${cpiAfgeleid}</td>
+                                <td>${jaarmutatieCPI}</td>
+                                <td>${jaarmutatieCPIAfgeleid}</td>
+                              </tr>`;
+            });
+
+            // Insert the data into the table on your page
+            document.querySelector('#dataTable tbody').innerHTML = tableData;
+
+        } catch (error) {
+            console.error('Error fetching the table data:', error);
+        }
+    }
+
+    // Fetch and display the table data when the page loads
+    window.onload = fetchTableData;
 
 
     </script>

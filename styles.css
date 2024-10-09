@@ -1,55 +1,17 @@
-/* Basic styles for the page */
-body {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f0f0f0;
+table {
+    width: 100%;
+    border-collapse: collapse;
 }
 
-.container {
-    text-align: center;
+table, th, td {
+    border: 1px solid black;
 }
 
-h1 {
-    color: #333;
-    margin-bottom: 10px;
+th, td {
+    padding: 8px;
+    text-align: left;
 }
 
-p {
-    color: #666;
-}
-
-button {
-    padding: 10px 20px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-button:hover {
-    background-color: #218838;
-}
-
-/* The animated box */
-.box {
-    width: 100px;
-    height: 100px;
-    background-color: #007bff;
-    margin: 30px auto;
-    position: relative;
-    border-radius: 10px;
-    transition: all 1s ease;
-}
-
-/* Animation classes */
-.animate-box {
-    transform: translateY(200px) rotate(360deg);
-    background-color: #ff5722;
+th {
+    background-color: #f2f2f2;
 }
