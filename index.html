@@ -4,73 +4,127 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simple Animation Page</title>
+    <script src="https://cdn.jsdelivr.net/npm/@javascript/danfojs@0.5.2/lib/bundle.min.js"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <h1>Fetched Table Data</h1>
-
+<!--  -->
     <table id="dataTable">
         <thead>
             <tr>
-                <th>Period</th>
-                <th>CPI</th>
-                <th>CPI Afgeleid</th>
-                <th>Jaarmutatie CPI</th>
-                <th>Jaarmutatie CPI Afgeleid</th>
+                <th>Perioden</th>
+                <th>CPI_1</th> <!--Consumentenprijsindex alle huishoudens-->
+                <th>JaarmutatieCPI_5</th> <!--Procentuele mutatie van de CPI t.o.v. dezelfde periode een jaar eerder-->
             </tr>
         </thead>
         <tbody></tbody>
     </table>
 
     <script>
-        async function fetchTableData() {
-        const url = 'https://opendata.cbs.nl/statline/#/CBS/nl/dataset/83131ned/table?fromstatweb';  // Replace with the actual URL
-        try {
-            // Fetch the page's HTML
-            const response = await fetch(url);
-            const text = await response.text();
-            
-            // Create a DOM parser to extract HTML content
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(text, 'text/html');
+        const metadata = {
+            "odata.metadata": "https://opendata.cbs.nl/ODataApi/OData/83131NED/$metadata",
+            "value": [
+                { "name": "TableInfos", "url": "https://opendata.cbs.nl/ODataApi/odata/83131NED/TableInfos" },
+                { "name": "UntypedDataSet", "url": "https://opendata.cbs.nl/ODataApi/odata/83131NED/UntypedDataSet" },
+                { "name": "TypedDataSet", "url": "https://opendata.cbs.nl/ODataApi/odata/83131NED/TypedDataSet" },
+                { "name": "DataProperties", "url": "https://opendata.cbs.nl/ODataApi/odata/83131NED/DataProperties" },
+                { "name": "CategoryGroups", "url": "https://opendata.cbs.nl/ODataApi/odata/83131NED/CategoryGroups" },
+                { "name": "Bestedingscategorieen", "url": "https://opendata.cbs.nl/ODataApi/odata/83131NED/Bestedingscategorieen" },
+                { "name": "Perioden", "url": "https://opendata.cbs.nl/ODataApi/odata/83131NED/Perioden" }
+            ]
+        };
 
-            // Select the specific table element
-            const table = doc.querySelector('.pvtTable tbody');
+        // // Function to list available entities
+        // function listAvailableEntities(metadata) {
+        //     console.log("Available Entities:");
+        //     metadata.value.forEach(entity => {
+        //         console.log(`Entity Name: ${entity.name}, URL: ${entity.url}`);
+        //     });
+        // }
 
-            // Get the table's rows
-            const rows = table.querySelectorAll('tr');
-
-            // Create a variable to hold the extracted data
-            let tableData = '';
-
-            // Loop through each row
-            rows.forEach(row => {
-                const period = row.querySelector('.pvtRowLabel div').innerText;
-                const cpi = row.querySelector('.col0').innerText;
-                const cpiAfgeleid = row.querySelector('.col1').innerText;
-                const jaarmutatieCPI = row.querySelector('.col2').innerText;
-                const jaarmutatieCPIAfgeleid = row.querySelector('.col3').innerText;
-
-                // Add extracted row data to the tableData variable
-                tableData += `<tr>
-                                <td>${period}</td>
-                                <td>${cpi}</td>
-                                <td>${cpiAfgeleid}</td>
-                                <td>${jaarmutatieCPI}</td>
-                                <td>${jaarmutatieCPIAfgeleid}</td>
-                              </tr>`;
-            });
-
-            // Insert the data into the table on your page
-            document.querySelector('#dataTable tbody').innerHTML = tableData;
-
-        } catch (error) {
-            console.error('Error fetching the table data:', error);
+        function getTypedDataSetUrl(years, category) {
+            // Create a dynamic filter based on the years provided
+            const yearFilters = years.map(year => `substringof('${year}', Perioden)`).join(' or ');
+            const categoryFilter = `Bestedingscategorieen eq '${category}'`;
+            const filter = `${yearFilters} and ${categoryFilter}`;
+            // Construct the final URL
+            const typedDataSetUrl = metadata.value.find(entity => entity.name === 'TypedDataSet').url + 
+                `?$filter=${filter}&$orderby=Perioden`; // Change ordering and top values as needed
+            return typedDataSetUrl;
         }
-    }
 
-    // Fetch and display the table data when the page loads
-    window.onload = fetchTableData;
+
+        // const multipleYearsUrl = getTypedDataSetUrl(['2024', '2023'], 'T001112  ');
+        // console.log('Multiple Years URL:', multipleYearsUrl);
+
+
+        // Function to populate table with filtered data
+        function populateTable(data) {
+            const tableBody = document.querySelector("#dataTable tbody");
+
+            // Clear the existing table rows
+            tableBody.innerHTML = '';
+
+            // Loop through each item and create a row with the required columns
+            data.forEach(item => {
+                const row = document.createElement("tr");
+
+                // Create cells for each column
+                const periodCell = document.createElement("td");
+                periodCell.textContent = item.Perioden;
+                row.appendChild(periodCell);
+
+                const cpiCell = document.createElement("td");
+                cpiCell.textContent = item.CPI_1;
+                row.appendChild(cpiCell);
+
+                const jaarmutatieCell = document.createElement("td");
+                jaarmutatieCell.textContent = item.JaarmutatieCPI_5;
+                row.appendChild(jaarmutatieCell);
+
+                // Append the row to the table body
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Fetch data from TypedDataSet
+        async function fetchTypedDataSet(years, category) {
+            const typedDataSetUrl = getTypedDataSetUrl(years, category);
+            // console.log('Fetching Data from URL:', typedDataSetUrl); // Log the URL being fetched
+            try {
+                const response = await fetch(typedDataSetUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                // Filter out entries where Perioden ends with "00"
+                const filteredData = data.value.filter(item => !item.Perioden.endsWith('00')).reverse();       
+                console.log('Fetched Data:', JSON.stringify(filteredData, null, 2)); // Log the fetched data
+
+                // Populate the table with filtered data
+                populateTable(filteredData);
+
+            } catch (error) {
+                console.error('Error fetching TypedDataSet:', error);
+                }
+        }
+
+        // Example usage
+        fetchTypedDataSet(['2024', '2023'], 'T001112  '); 
+
+
+
+
+
 
 
     </script>
