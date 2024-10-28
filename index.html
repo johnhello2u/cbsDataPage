@@ -8,21 +8,31 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Fetched Table Data</h1>
-<!--  -->
-    <table id="dataTable">
+    <h1>CPI data</h1>
+    <table id="CpiTable">
         <thead>
             <tr>
                 <th>Perioden</th>
-                <th>CPI_1</th> <!--Consumentenprijsindex alle huishoudens-->
+                <th>CPI_1</th> <!--Consumentenprijsindex alle huishoudens 2015 = 100 -->
                 <th>JaarmutatieCPI_5</th> <!--Procentuele mutatie van de CPI t.o.v. dezelfde periode een jaar eerder-->
             </tr>
         </thead>
         <tbody></tbody>
     </table>
 
+    <h1>lolol</h1>
+    <table id="XXTable">
+        <thead>
+            <tr>
+                <th>Perioden</th>
+                <th>CPI_1</th> <!--Consumentenprijsindex alle huishoudens 2015 = 100 -->
+                <th>JaarmutatieCPI_5</th> <!--Procentuele mutatie van de CPI t.o.v. dezelfde periode een jaar eerder-->
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
     <script>
-        const metadata = {
+        const CPI_metadata = {
             "odata.metadata": "https://opendata.cbs.nl/ODataApi/OData/83131NED/$metadata",
             "value": [
                 { "name": "TableInfos", "url": "https://opendata.cbs.nl/ODataApi/odata/83131NED/TableInfos" },
@@ -35,6 +45,20 @@
             ]
         };
 
+        const PPI_metadata = {
+            "odata.metadata": "https://opendata.cbs.nl/ODataApi/OData/85771NED/$metadata",
+            "value": [
+                { "name": "TableInfos", "url": "https://opendata.cbs.nl/ODataApi/odata/85771NED/TableInfos" },
+                { "name": "UntypedDataSet", "url": "https://opendata.cbs.nl/ODataApi/odata/85771NED/UntypedDataSet" },
+                { "name": "TypedDataSet", "url": "https://opendata.cbs.nl/ODataApi/odata/85771NED/TypedDataSet" },
+                { "name": "DataProperties", "url": "https://opendata.cbs.nl/ODataApi/odata/85771NED/DataProperties" },
+                { "name": "CategoryGroups", "url": "https://opendata.cbs.nl/ODataApi/odata/85771NED/CategoryGroups" },
+                { "name": "Afzet", "url": "https://opendata.cbs.nl/ODataApi/odata/85771NED/Afzet" },
+                { "name": "AlleBedrijfstakken", "url": "https://opendata.cbs.nl/ODataApi/odata/85771NED/AlleBedrijfstakken" },
+                { "name": "Perioden", "url": "https://opendata.cbs.nl/ODataApi/odata/85771NED/Perioden" }
+            ]
+        };
+
         // // Function to list available entities
         // function listAvailableEntities(metadata) {
         //     console.log("Available Entities:");
@@ -43,7 +67,7 @@
         //     });
         // }
 
-        function getTypedDataSetUrl(years, category) {
+        function getTypedDataSetUrl(years, category, metadata) {
             // Create a dynamic filter based on the years provided
             const yearFilters = years.map(year => `substringof('${year}', Perioden)`).join(' or ');
             const categoryFilter = `Bestedingscategorieen eq '${category}'`;
@@ -55,21 +79,18 @@
         }
 
 
-        // const multipleYearsUrl = getTypedDataSetUrl(['2024', '2023'], 'T001112  ');
-        // console.log('Multiple Years URL:', multipleYearsUrl);
+
 
 
         // Function to populate table with filtered data
-        function populateTable(data) {
-            const tableBody = document.querySelector("#dataTable tbody");
-
+        function populateTable(data, tableName) {
+            const tableBody = document.querySelector(`#${tableName} tbody`);
             // Clear the existing table rows
             tableBody.innerHTML = '';
 
             // Loop through each item and create a row with the required columns
             data.forEach(item => {
                 const row = document.createElement("tr");
-
                 // Create cells for each column
                 const periodCell = document.createElement("td");
                 periodCell.textContent = item.Perioden;
@@ -90,7 +111,7 @@
 
         // Fetch data from TypedDataSet
         async function fetchTypedDataSet(years, category) {
-            const typedDataSetUrl = getTypedDataSetUrl(years, category);
+            const typedDataSetUrl = getTypedDataSetUrl(years, category, CPI_metadata);
             // console.log('Fetching Data from URL:', typedDataSetUrl); // Log the URL being fetched
             try {
                 const response = await fetch(typedDataSetUrl, {
@@ -111,7 +132,7 @@
                 console.log('Fetched Data:', JSON.stringify(filteredData, null, 2)); // Log the fetched data
 
                 // Populate the table with filtered data
-                populateTable(filteredData);
+                populateTable(filteredData, "CpiTable");
 
             } catch (error) {
                 console.error('Error fetching TypedDataSet:', error);
