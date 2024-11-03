@@ -39,14 +39,16 @@
         <thead>
             <tr>
                 <th>Perioden</th>
-                <th>omzetIndex</th> 
+                <th>G Handel 354200 </th> 
+                <th>H Vervoer en opslag 383100 </th> 
+                <th>I Horeca 389100 </th> 
             </tr>
         </thead>
         <tbody></tbody>
     </table>
 
     <footer>
-        <p>© 2024 Iosefka management consulting services All Rights Reserved</p>
+        <p>© 2024 Iosefka (JC) management consulting services All Rights Reserved</p>
     </footer>
 
     <script>
@@ -205,7 +207,8 @@
         function getTypedDataSetUrl_Service(years, AlleBedrijfstakken, metadata) {
             // Create a dynamic filter based on the years provided
             const yearFilters = years.map(year => `substringof('${year}', Perioden)`).join(' or ');
-            const btak = `BedrijfstakkenBranchesSBI2008 eq '${AlleBedrijfstakken.join(",")}'`;
+            // const btak = `BedrijfstakkenBranchesSBI2008 eq '${AlleBedrijfstakken.join(",")}'`;
+            const btak = `BedrijfstakkenBranchesSBI2008 eq '${AlleBedrijfstakken.join("' or BedrijfstakkenBranchesSBI2008 eq '")}'`;
             // const afzetFilter = `Afzet eq '${Afzet.join(",")}'`; 
             const filter = `${yearFilters} and ${btak}`;
             const typedDataSetUrl = metadata.value.find(entity => entity.name === 'TypedDataSet').url + 
@@ -217,23 +220,51 @@
         function Service_populateTable(data, tableName) {
             const tableBody = document.querySelector(`#${tableName} tbody`);
             tableBody.innerHTML = '';
+            const periods = {}; // Object to store data by period
+
+            // Initialize the structure for each period
             data.forEach(item => {
+                if (!periods[item.Perioden]) {
+                    periods[item.Perioden] = {
+                        "354200": null,
+                        "383100": null,
+                        "389100": null
+                    };
+                }
+
+                // Assign values to the respective sectors
+                if (item.BedrijfstakkenBranchesSBI2008.trim() === "354200") {
+                    periods[item.Perioden]["354200"] = item.Ongecorrigeerd_1;
+                } else if (item.BedrijfstakkenBranchesSBI2008.trim() === "383100") {
+                    periods[item.Perioden]["383100"] = item.Ongecorrigeerd_1;
+                } else if (item.BedrijfstakkenBranchesSBI2008.trim() === "389100") {
+                    periods[item.Perioden]["389100"] = item.Ongecorrigeerd_1;
+                }
+            });
+
+            // Populate the table rows
+            for (const [period, values] of Object.entries(periods)) {
                 const row = document.createElement("tr");
                 const periodCell = document.createElement("td");
-                periodCell.textContent = item.Perioden;
+                periodCell.textContent = period; // Add period
                 row.appendChild(periodCell);
-                const cpiCell = document.createElement("td");
-                cpiCell.textContent = item.Ongecorrigeerd_1;
-                row.appendChild(cpiCell);
-                // const maandmutatieCell = document.createElement("td");
-                // maandmutatieCell.textContent = item.MaandmutatiePPI_2;
-                // row.appendChild(maandmutatieCell);
-                // const jaarmutatieCell = document.createElement("td");
-                // jaarmutatieCell.textContent = item.JaarmutatiePPI_3;
-                // row.appendChild(jaarmutatieCell);
+
+                // Add cells for each sector
+                row.appendChild(createCell(values["354200"]));
+                row.appendChild(createCell(values["383100"]));
+                row.appendChild(createCell(values["389100"]));
+
                 tableBody.appendChild(row);
-            });
+            }
         }
+
+        // Helper function to create a table cell
+        function createCell(value) {
+            const cell = document.createElement("td");
+            cell.textContent = value !== null ? value : ""; // If there's no value, show "N/A"
+            return cell;
+        }
+
 
         async function Service_fetchTypedDataSet(years, AlleBedrijfstakken, html_table, metaTable) {
             const typedDataSetUrl = getTypedDataSetUrl_Service(years, AlleBedrijfstakken, metaTable);
@@ -249,17 +280,22 @@
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                // Filter out entries where Perioden ends with "00"
-                const filteredData = data.value.filter(item => !item.Perioden.endsWith('00')).reverse().slice(0, 12);  
-
+                // Filter out entries where Perioden ends with "00" and others as needed
+                const filteredData = data.value
+                    .filter(item => 
+                        !item.Perioden.endsWith('00') &&
+                        !(item.Perioden.charAt(4) === 'K'))
+                    .reverse()
+                    .slice(0, 12);
 
                 Service_populateTable(filteredData, html_table);
-                
             } catch (error) {
                 console.error('Error fetching TypedDataSet:', error);
-                }
+            }
         }
-        Service_fetchTypedDataSet(['2024', '2023'],['354200 '], "ServiceTable", Service_industry_metadata); 
+
+        // Fetch data for the specified sectors
+        Service_fetchTypedDataSet(['2024', '2023'], ['354200 ', '383100 ', '389100 '], "ServiceTable", Service_industry_metadata);
 
 
 

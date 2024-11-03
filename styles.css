@@ -50,7 +50,7 @@ tbody tr:nth-child(even) {
 }
 
 tbody tr:hover {
-    background-color: #1abc9c; /* Teal hover effect */
+    background-color: #6495c7; /* Teal hover effect */
     color: white; /* Change text color on hover */
 }
 
