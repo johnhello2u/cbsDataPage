@@ -8,40 +8,48 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>CPI data</h1>
+    <h1>Consumer Price Index</h1>
+    <p>index 2015=100</p>
     <table id="CpiTable">
         <thead>
             <tr>
-                <th>Perioden</th>
-                <th>CPI_1</th> <!--Consumentenprijsindex alle huishoudens 2015 = 100 -->
-                <th>MaandmutatieCPI_3</th> 
-                <th>JaarmutatieCPI_5</th> <!--Procentuele mutatie van de CPI t.o.v. dezelfde periode een jaar eerder-->
+                <th>Period</th>
+                <th>Index</th> <!--Consumentenprijsindex alle huishoudens 2015 = 100 -->
+                <th>Month mutation</th> 
+                <th>Year mutation</th> <!--Procentuele mutatie van de CPI t.o.v. dezelfde periode een jaar eerder-->
             </tr>
         </thead>
         <tbody></tbody>
     </table>
 
-    <h1>PPI data</h1>
+    <h1>Producer Price Index</h1>
+    <p>index 2021=100</p>
     <table id="PpiTable">
         <thead>
             <tr>
-                <th>Perioden</th>
-                <th>ProducentenprijsindexPPI_1</th> 
-                <th>MaandmutatiePPI_2</th> 
-                <th>JaarmutatiePPI_3</th>
+                <th>Period</th>
+                <th>Index</th> 
+                <th>Month mutation</th> 
+                <th>Year mutation</th>
             </tr>
         </thead>
         <tbody></tbody>
     </table>
 
-    <h1>Trade&Service data</h1>
+    <h1>Trade & Services turnover and production Index</h1>
+    <p>index 2021=100</p>
     <table id="ServiceTable">
         <thead>
             <tr>
-                <th>Perioden</th>
-                <th>G Handel 354200 </th> 
-                <th>H Vervoer en opslag 383100 </th> 
-                <th>I Horeca 389100 </th> 
+                <!--  -->
+                <th>Period</th>
+                <th>Trade</th> <!-- G Handel 354200 -->
+                <th>transport & storage</th> <!-- H Vervoer en opslag 383100 -->
+                <th>Catering</th> <!-- I Horeca 389100 -->
+                <th>Information & communication</th> <!-- J Informatie en communicatie 391600 -->
+                <th>Realestate</th> <!-- L Verhuur en handel van onroerend goed 402000 -->
+                <th>Rental & other</th> <!-- N Verhuur en overige zakelijke diensten 410200 -->
+                <th>Total Services</th> <!-- M-N Zakelijke dienstverlening 300010 -->
             </tr>
         </thead>
         <tbody></tbody>
@@ -228,10 +236,14 @@
                     periods[item.Perioden] = {
                         "354200": null,
                         "383100": null,
-                        "389100": null
+                        "389100": null,
+
+                        "391600": null,
+                        "402000": null,
+                        "B000655": null,
+                        "410200": null
                     };
                 }
-
                 // Assign values to the respective sectors
                 if (item.BedrijfstakkenBranchesSBI2008.trim() === "354200") {
                     periods[item.Perioden]["354200"] = item.Ongecorrigeerd_1;
@@ -240,10 +252,27 @@
                 } else if (item.BedrijfstakkenBranchesSBI2008.trim() === "389100") {
                     periods[item.Perioden]["389100"] = item.Ongecorrigeerd_1;
                 }
+
+                else if (item.BedrijfstakkenBranchesSBI2008.trim() === "391600") {
+                    periods[item.Perioden]["391600"] = item.Ongecorrigeerd_1;
+                }
+                else if (item.BedrijfstakkenBranchesSBI2008.trim() === "402000") {
+                    periods[item.Perioden]["402000"] = item.Ongecorrigeerd_1;
+                }
+                else if (item.BedrijfstakkenBranchesSBI2008.trim() === "B000655") {
+                    periods[item.Perioden]["B000655"] = item.Ongecorrigeerd_1;
+                }
+                else if (item.BedrijfstakkenBranchesSBI2008.trim() === "410200") {
+                    periods[item.Perioden]["410200"] = item.Ongecorrigeerd_1;
+                }
+
             });
+            console.log(periods);
+            // Convert periods object to an array and get the last 12 entries
+            const last12Entries = Object.entries(periods).slice(0,12);
 
             // Populate the table rows
-            for (const [period, values] of Object.entries(periods)) {
+            for (const [period, values] of last12Entries) {
                 const row = document.createElement("tr");
                 const periodCell = document.createElement("td");
                 periodCell.textContent = period; // Add period
@@ -254,6 +283,11 @@
                 row.appendChild(createCell(values["383100"]));
                 row.appendChild(createCell(values["389100"]));
 
+                row.appendChild(createCell(values["391600"]));
+                row.appendChild(createCell(values["402000"]));
+                row.appendChild(createCell(values["410200"]));
+                row.appendChild(createCell(values["B000655"]));
+
                 tableBody.appendChild(row);
             }
         }
@@ -261,7 +295,7 @@
         // Helper function to create a table cell
         function createCell(value) {
             const cell = document.createElement("td");
-            cell.textContent = value !== null ? value : ""; // If there's no value, show "N/A"
+            cell.textContent = value !== null ? value : ""; 
             return cell;
         }
 
@@ -285,9 +319,9 @@
                     .filter(item => 
                         !item.Perioden.endsWith('00') &&
                         !(item.Perioden.charAt(4) === 'K'))
-                    .reverse()
-                    .slice(0, 12);
-
+                    .reverse();
+                    // .slice(0, 12);
+                // console.log(filteredData);
                 Service_populateTable(filteredData, html_table);
             } catch (error) {
                 console.error('Error fetching TypedDataSet:', error);
@@ -295,9 +329,7 @@
         }
 
         // Fetch data for the specified sectors
-        Service_fetchTypedDataSet(['2024', '2023'], ['354200 ', '383100 ', '389100 '], "ServiceTable", Service_industry_metadata);
-
-
+        Service_fetchTypedDataSet(['2024', '2023'], ['354200 ', '383100 ', '389100 ','391600 ','402000 ','410200 ','B000655'], "ServiceTable", Service_industry_metadata);
 
 
 
@@ -375,6 +407,8 @@
     import { PPI_fetchTypedDataSet } from './myfuncs.js';
     PPI_fetchTypedDataSet(['2024', '2023'],['300002'],['A044074'], "PpiTable", PPI_metadata); 
 </script>
+
+
 
 </body>
 </html>
