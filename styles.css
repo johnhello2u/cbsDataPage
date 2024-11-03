@@ -1,33 +1,68 @@
-table {
-    width: 100%;
-    border-collapse: collapse;
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px;
+    background-color: #e9f5f5; /* Light background */
+    color: #333;
 }
 
-table, th, td {
-    border: 1px solid black;
+h1 {
+    text-align: center;
+    color: #2c3e50; /* Darker header color */
+    margin-bottom: 20px;
+    font-size: 2em;
+    border-bottom: 2px solid #1abc9c; /* Green border */
+    padding-bottom: 10px;
+}
+
+table {
+    width: 100%;
+    margin-bottom: 40px;
+    border-collapse: collapse;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #fff; /* White background for tables */
+}
+
+thead {
+    background-color: #16a085; /* Dark teal color */
+    color: white;
 }
 
 th, td {
-    padding: 8px;
+    padding: 12px;
     text-align: left;
+    border: 1px solid #ddd;
 }
 
 th {
-    background-color: #f2f2f2;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.9em;
 }
 
+tbody tr:nth-child(odd) {
+    background-color: #f2fdf2; /* Light green for odd rows */
+}
 
-/* Footer always at the bottom */
+tbody tr:nth-child(even) {
+    background-color: #eaf6f6; /* Light blue for even rows */
+}
+
+tbody tr:hover {
+    background-color: #1abc9c; /* Teal hover effect */
+    color: white; /* Change text color on hover */
+}
+
 footer {
     text-align: center;
-    padding: 20px 0;
-    background-color: #174545;
-    color: #f0f0f0;
-    margin-top: auto; /* Pushes footer to the bottom */
-    width: 100%;
+    margin-top: 40px;
+    font-size: 0.9em;
+    color: #777;
 }
 
 footer p {
-    margin: 0;
-    font-size: 14px;
+    margin: 10px 0;
 }
+
+

@@ -34,6 +34,17 @@
         <tbody></tbody>
     </table>
 
+    <h1>Trade&Service data</h1>
+    <table id="ServiceTable">
+        <thead>
+            <tr>
+                <th>Perioden</th>
+                <th>omzetIndex</th> 
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
     <footer>
         <p>© 2024 Iosefka management consulting services All Rights Reserved</p>
     </footer>
@@ -87,17 +98,12 @@
         // https://opendata.cbs.nl/statline/#/CBS/nl/dataset/82061NED/table?ts=1730248784696
 
 
-        // // Function to list available entities
-        // function listAvailableEntities(metadata) {
-        //     console.log("Available Entities:");
-        //     metadata.value.forEach(entity => {
-        //         console.log(`Entity Name: ${entity.name}, URL: ${entity.url}`);
-        //     });
-        // }
-
-
         // testin ggettig the data sets  
-        const typedDataSetUrl = `${Service_industry_metadata.value.find(entity => entity.name === 'TypedDataSet').url}?$top=100`;
+        // const typedDataSetUrl = `${Service_industry_metadata.value.find(entity => entity.name === 'TypedDataSet').url}?$top=100`;
+        // const typedDataSetUrl = `${Service_industry_metadata.value.find(entity => entity.name === 'TypedDataSet').url}?$top=100&$filter=startswith(Perioden, '2024')`;
+        const typedDataSetUrl = `${Service_industry_metadata.value.find(entity => entity.name === 'TypedDataSet').url}?$top=100&$filter=startswith(Perioden, '2024') and BedrijfstakkenBranchesSBI2008 eq '354200 '`;
+
+
         fetch(typedDataSetUrl, {
             method: 'GET',
             headers: {
@@ -112,7 +118,7 @@
         })
         .then(data => {
             // console.log("FETCHFETCH:", data.value.slice(0, 5)); // Display first 5 entries as sample
-            console.log("FETCHFETCH:", JSON.stringify(data.value.slice(0, 40), null, 2));
+            console.log("FETCHFETCH:", JSON.stringify(data.value.slice(0, 100), null, 2));
         })
 
 
@@ -185,6 +191,79 @@
         }
         // Example usage
         fetchTypedDataSet(['2024', '2023'], 'T001112  ', "CpiTable", CPI_metadata); 
+
+
+
+
+
+
+
+
+//  -----------------------------------------------------------------------------------------------------------
+//  Service -------------------------------------------------------------------------------------------  
+//  -----------------------------------------------------------------------------------------------------------  
+        function getTypedDataSetUrl_Service(years, AlleBedrijfstakken, metadata) {
+            // Create a dynamic filter based on the years provided
+            const yearFilters = years.map(year => `substringof('${year}', Perioden)`).join(' or ');
+            const btak = `BedrijfstakkenBranchesSBI2008 eq '${AlleBedrijfstakken.join(",")}'`;
+            // const afzetFilter = `Afzet eq '${Afzet.join(",")}'`; 
+            const filter = `${yearFilters} and ${btak}`;
+            const typedDataSetUrl = metadata.value.find(entity => entity.name === 'TypedDataSet').url + 
+                `?$filter=${filter}&$orderby=Perioden`; // Change ordering and top values as needed
+            return typedDataSetUrl;
+        }
+        // const datadata = getTypedDataSetUrl_Service(['2024', '2023'], ['354200'], Service_industry_metadata);
+
+        function Service_populateTable(data, tableName) {
+            const tableBody = document.querySelector(`#${tableName} tbody`);
+            tableBody.innerHTML = '';
+            data.forEach(item => {
+                const row = document.createElement("tr");
+                const periodCell = document.createElement("td");
+                periodCell.textContent = item.Perioden;
+                row.appendChild(periodCell);
+                const cpiCell = document.createElement("td");
+                cpiCell.textContent = item.Ongecorrigeerd_1;
+                row.appendChild(cpiCell);
+                // const maandmutatieCell = document.createElement("td");
+                // maandmutatieCell.textContent = item.MaandmutatiePPI_2;
+                // row.appendChild(maandmutatieCell);
+                // const jaarmutatieCell = document.createElement("td");
+                // jaarmutatieCell.textContent = item.JaarmutatiePPI_3;
+                // row.appendChild(jaarmutatieCell);
+                tableBody.appendChild(row);
+            });
+        }
+
+        async function Service_fetchTypedDataSet(years, AlleBedrijfstakken, html_table, metaTable) {
+            const typedDataSetUrl = getTypedDataSetUrl_Service(years, AlleBedrijfstakken, metaTable);
+            try {
+                const response = await fetch(typedDataSetUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                // Filter out entries where Perioden ends with "00"
+                const filteredData = data.value.filter(item => !item.Perioden.endsWith('00')).reverse().slice(0, 12);  
+
+
+                Service_populateTable(filteredData, html_table);
+                
+            } catch (error) {
+                console.error('Error fetching TypedDataSet:', error);
+                }
+        }
+        Service_fetchTypedDataSet(['2024', '2023'],['354200 '], "ServiceTable", Service_industry_metadata); 
+
+
+
+
 
 //  -----------------------------------------------------------------------------------------------------------
 //  PPI -------------------------------------------------------------------------------------------  
