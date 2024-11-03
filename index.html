@@ -33,6 +33,11 @@
         </thead>
         <tbody></tbody>
     </table>
+
+    <footer>
+        <p>© 2024 Iosefka management consulting services All Rights Reserved</p>
+    </footer>
+
     <script>
         const CPI_metadata = {
             "odata.metadata": "https://opendata.cbs.nl/ODataApi/OData/83131NED/$metadata",
@@ -48,7 +53,6 @@
         };
 
         const PPI_metadata = {
-            // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=85771NED&_theme=395
             "odata.metadata": "https://opendata.cbs.nl/ODataApi/OData/85771NED/$metadata",
             "value": [
                 { "name": "TableInfos", "url": "https://opendata.cbs.nl/ODataApi/odata/85771NED/TableInfos" },
@@ -65,11 +69,23 @@
             ]
         };
 
+        const Service_industry_metadata = {"odata.metadata": "https://opendata.cbs.nl/ODataApi/OData/85828NED/$metadata",
+            "value": [
+                {"name": "TableInfos","url": "https://opendata.cbs.nl/ODataApi/odata/85828NED/TableInfos"},
+                {"name": "UntypedDataSet","url": "https://opendata.cbs.nl/ODataApi/odata/85828NED/UntypedDataSet"},
+                {"name": "TypedDataSet","url": "https://opendata.cbs.nl/ODataApi/odata/85828NED/TypedDataSet"},
+                {"name": "DataProperties","url": "https://opendata.cbs.nl/ODataApi/odata/85828NED/DataProperties"},
+                {"name": "CategoryGroups","url": "https://opendata.cbs.nl/ODataApi/odata/85828NED/CategoryGroups"},
+                {"name": "BedrijfstakkenBranchesSBI2008","url": "https://opendata.cbs.nl/ODataApi/odata/85828NED/BedrijfstakkenBranchesSBI2008"},
+                {"name": "Perioden","url": "https://opendata.cbs.nl/ODataApi/odata/85828NED/Perioden"}
+            ]
+            };
+
+
         // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=85828NED&_theme=426
 
         // https://opendata.cbs.nl/statline/#/CBS/nl/dataset/82061NED/table?ts=1730248784696
 
-        // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=85828NED&_theme=426
 
         // // Function to list available entities
         // function listAvailableEntities(metadata) {
@@ -81,7 +97,7 @@
 
 
         // testin ggettig the data sets  
-        const typedDataSetUrl = `${PPI_metadata.value.find(entity => entity.name === 'TypedDataSet').url}?$top=100`;
+        const typedDataSetUrl = `${Service_industry_metadata.value.find(entity => entity.name === 'TypedDataSet').url}?$top=100`;
         fetch(typedDataSetUrl, {
             method: 'GET',
             headers: {
@@ -173,76 +189,77 @@
 //  -----------------------------------------------------------------------------------------------------------
 //  PPI -------------------------------------------------------------------------------------------  
 //  -----------------------------------------------------------------------------------------------------------  
-        function getTypedDataSetUrl_PPI(years, AlleBedrijfstakken, Afzet, metadata) {
-            // Create a dynamic filter based on the years provided
-            const yearFilters = years.map(year => `substringof('${year}', Perioden)`).join(' or ');
-            const btak = `AlleBedrijfstakken eq '${AlleBedrijfstakken.join(",")}'`;
-            const afzetFilter = `Afzet eq '${Afzet.join(",")}'`; 
-            const filter = `${yearFilters} and ${btak} and ${afzetFilter}`;
-            const typedDataSetUrl = metadata.value.find(entity => entity.name === 'TypedDataSet').url + 
-                `?$filter=${filter}&$orderby=Perioden`; // Change ordering and top values as needed
-            return typedDataSetUrl;
-        }
-        // const datadata = getTypedDataSetUrl_PPI(['2024', '2023'], ['300002'],['A044074'], PPI_metadata);
-        function PPI_populateTable(data, tableName) {
-            const tableBody = document.querySelector(`#${tableName} tbody`);
-            tableBody.innerHTML = '';
-            data.forEach(item => {
-                const row = document.createElement("tr");
-                const periodCell = document.createElement("td");
-                periodCell.textContent = item.Perioden;
-                row.appendChild(periodCell);
-                const cpiCell = document.createElement("td");
-                cpiCell.textContent = item.ProducentenprijsindexPPI_1;
-                row.appendChild(cpiCell);
-                const maandmutatieCell = document.createElement("td");
-                maandmutatieCell.textContent = item.MaandmutatiePPI_2;
-                row.appendChild(maandmutatieCell);
-                const jaarmutatieCell = document.createElement("td");
-                jaarmutatieCell.textContent = item.JaarmutatiePPI_3;
-                row.appendChild(jaarmutatieCell);
-                tableBody.appendChild(row);
-            });
-        }
+        // function getTypedDataSetUrl_PPI(years, AlleBedrijfstakken, Afzet, metadata) {
+        //     // Create a dynamic filter based on the years provided
+        //     const yearFilters = years.map(year => `substringof('${year}', Perioden)`).join(' or ');
+        //     const btak = `AlleBedrijfstakken eq '${AlleBedrijfstakken.join(",")}'`;
+        //     const afzetFilter = `Afzet eq '${Afzet.join(",")}'`; 
+        //     const filter = `${yearFilters} and ${btak} and ${afzetFilter}`;
+        //     const typedDataSetUrl = metadata.value.find(entity => entity.name === 'TypedDataSet').url + 
+        //         `?$filter=${filter}&$orderby=Perioden`; // Change ordering and top values as needed
+        //     return typedDataSetUrl;
+        // }
+        // // const datadata = getTypedDataSetUrl_PPI(['2024', '2023'], ['300002'],['A044074'], PPI_metadata);
+        // function PPI_populateTable(data, tableName) {
+        //     const tableBody = document.querySelector(`#${tableName} tbody`);
+        //     tableBody.innerHTML = '';
+        //     data.forEach(item => {
+        //         const row = document.createElement("tr");
+        //         const periodCell = document.createElement("td");
+        //         periodCell.textContent = item.Perioden;
+        //         row.appendChild(periodCell);
+        //         const cpiCell = document.createElement("td");
+        //         cpiCell.textContent = item.ProducentenprijsindexPPI_1;
+        //         row.appendChild(cpiCell);
+        //         const maandmutatieCell = document.createElement("td");
+        //         maandmutatieCell.textContent = item.MaandmutatiePPI_2;
+        //         row.appendChild(maandmutatieCell);
+        //         const jaarmutatieCell = document.createElement("td");
+        //         jaarmutatieCell.textContent = item.JaarmutatiePPI_3;
+        //         row.appendChild(jaarmutatieCell);
+        //         tableBody.appendChild(row);
+        //     });
+        // }
 
-        async function PPI_fetchTypedDataSet(years, AlleBedrijfstakken, Afzet, html_table, metaTable) {
-            const typedDataSetUrl = getTypedDataSetUrl_PPI(years, AlleBedrijfstakken, Afzet, metaTable);
-            try {
-                const response = await fetch(typedDataSetUrl, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
-                });
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const data = await response.json();
-                // Filter out entries where Perioden ends with "00"
-                const filteredData = data.value.filter(item => !item.Perioden.endsWith('00')).reverse().slice(0, 12);  
+        // export async function PPI_fetchTypedDataSet(years, AlleBedrijfstakken, Afzet, html_table, metaTable) {
+        //     const typedDataSetUrl = getTypedDataSetUrl_PPI(years, AlleBedrijfstakken, Afzet, metaTable);
+        //     try {
+        //         const response = await fetch(typedDataSetUrl, {
+        //             method: 'GET',
+        //             headers: {
+        //                 'Accept': 'application/json',
+        //                 'Content-Type': 'application/json'
+        //             }
+        //         });
+        //         if (!response.ok) {
+        //             throw new Error(`HTTP error! status: ${response.status}`);
+        //         }
+        //         const data = await response.json();
+        //         // Filter out entries where Perioden ends with "00"
+        //         const filteredData = data.value.filter(item => !item.Perioden.endsWith('00')).reverse().slice(0, 12);  
 
 
-                PPI_populateTable(filteredData, html_table);
+        //         PPI_populateTable(filteredData, html_table);
                 
-            } catch (error) {
-                console.error('Error fetching TypedDataSet:', error);
-                }
-        }
+        //     } catch (error) {
+        //         console.error('Error fetching TypedDataSet:', error);
+        //         }
+        // }
         // Example usage
-        PPI_fetchTypedDataSet(['2024', '2023'],['300002'],['A044074'], "PpiTable", PPI_metadata); 
+        // PPI_fetchTypedDataSet(['2024', '2023'],['300002'],['A044074'], "PpiTable", PPI_metadata); 
 
 //  -----------------------------------------------------------------------------------------------------------
 //  FUNCTION TO GET -------------------------------------------------------------------------------------------  
 //  -----------------------------------------------------------------------------------------------------------      
         // fetchTypedDataSet(['2024', '2023'], 'T001112  ', "PpiTable"); 
 
-
-
-
-
-
-
     </script>
+
+
+<script type="module">
+    import { PPI_fetchTypedDataSet } from './myfuncs.js';
+    PPI_fetchTypedDataSet(['2024', '2023'],['300002'],['A044074'], "PpiTable", PPI_metadata); 
+</script>
+
 </body>
 </html>

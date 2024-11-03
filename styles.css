@@ -15,3 +15,19 @@ th, td {
 th {
     background-color: #f2f2f2;
 }
+
+
+/* Footer always at the bottom */
+footer {
+    text-align: center;
+    padding: 20px 0;
+    background-color: #174545;
+    color: #f0f0f0;
+    margin-top: auto; /* Pushes footer to the bottom */
+    width: 100%;
+}
+
+footer p {
+    margin: 0;
+    font-size: 14px;
+}
