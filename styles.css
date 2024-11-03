@@ -1,68 +1,101 @@
+/* General Body Styling */
 body {
     font-family: 'Arial', sans-serif;
     line-height: 1.6;
     margin: 0;
     padding: 20px;
-    background-color: #e9f5f5; /* Light background */
+    background-color: #f4f8fb; /* Softer light background */
     color: #333;
 }
 
+/* Header Section Styling */
+header {
+    background-color: #003f5c; /* Deep blue background */
+    color: white;
+    padding: 30px 20px;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 40px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Professional shadow */
+}
+
+header h2 {
+    font-size: 2em;
+    font-weight: 600;
+    margin: 0;
+    color: #f1f1f1;
+}
+
+header p {
+    font-size: 1.1em;
+    margin-top: 8px;
+    color: #d9e2ec; /* Lighter text for description */
+}
+
+/* Heading Styling */
 h1 {
     text-align: center;
     color: #2c3e50; /* Darker header color */
     margin-bottom: 20px;
-    font-size: 2em;
-    border-bottom: 2px solid #1abc9c; /* Green border */
-    padding-bottom: 10px;
+    font-size: 1.8em;
+    border-bottom: 2px solid #003f5c; /* Consistent deep blue border */
+    padding-bottom: 8px;
+    font-weight: 500;
 }
 
+/* Table Styling */
 table {
     width: 100%;
     margin-bottom: 40px;
     border-collapse: collapse;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    background-color: #fff; /* White background for tables */
+    background-color: #ffffff; /* Clean white background for tables */
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
 }
 
 thead {
-    background-color: #16a085; /* Dark teal color */
-    color: white;
+    background-color: #00799e; /* Professional teal */
+    color: #ffffff;
 }
 
 th, td {
-    padding: 12px;
+    padding: 15px 12px;
     text-align: left;
-    border: 1px solid #ddd;
+    border-bottom: 1px solid #e0e0e0;
 }
 
 th {
-    font-weight: bold;
+    font-weight: 600;
     text-transform: uppercase;
     font-size: 0.9em;
 }
 
 tbody tr:nth-child(odd) {
-    background-color: #f2fdf2; /* Light green for odd rows */
+    background-color: #f8fafd; /* Very light blue for odd rows */
 }
 
 tbody tr:nth-child(even) {
-    background-color: #eaf6f6; /* Light blue for even rows */
+    background-color: #edf7f9; /* Very light teal for even rows */
 }
 
 tbody tr:hover {
-    background-color: #6495c7; /* Teal hover effect */
-    color: white; /* Change text color on hover */
+    background-color: #005678; /* Darker teal on hover */
+    color: #ffffff; /* White text on hover */
+    cursor: pointer;
 }
 
+/* Footer Styling */
 footer {
     text-align: center;
-    margin-top: 40px;
-    font-size: 0.9em;
-    color: #777;
+    margin-top: 60px;
+    font-size: 0.85em;
+    color: #555;
+    padding: 15px 0;
+    border-top: 1px solid #e0e0e0;
 }
 
 footer p {
     margin: 10px 0;
+    color: #7a7a7a;
 }
-
-
