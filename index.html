@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iosefka Netherlands stats</title>
+    <title>Netherlands stats</title>
     <script src="https://cdn.jsdelivr.net/npm/@javascript/danfojs@0.5.2/lib/bundle.min.js"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -50,12 +50,12 @@
                 <!--  -->
                 <th>Period</th>
                 <th>Trade</th> <!-- G Handel 354200 -->
-                <th>transport & storage</th> <!-- H Vervoer en opslag 383100 -->
+                <th>Transport & storage</th> <!-- H Vervoer en opslag 383100 -->
                 <th>Catering</th> <!-- I Horeca 389100 -->
                 <th>Information & communication</th> <!-- J Informatie en communicatie 391600 -->
                 <th>Realestate</th> <!-- L Verhuur en handel van onroerend goed 402000 -->
-                <th>Rental & other</th> <!-- N Verhuur en overige zakelijke diensten 410200 -->
-                <th>Total Services</th> <!-- M-N Zakelijke dienstverlening 300010 -->
+                <th>Services</th> <!-- N Verhuur en overige zakelijke diensten 410200 -->
+                <th>Total</th> <!-- H+I+J+L+M+N Totaal dienstverlening B000655 -->
             </tr>
         </thead>
         <tbody></tbody>
@@ -109,10 +109,32 @@
             };
 
 
-        // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=85828NED&_theme=426
 
-        // https://opendata.cbs.nl/statline/#/CBS/nl/dataset/82061NED/table?ts=1730248784696
+        // employment per month 
+        // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=83451NED&_theme=6
+        // unemployment
+        // https://opendata.cbs.nl/statline/#/CBS/nl/dataset/80590ned/table?ts=1730856004603
+        // bankrupties
+        // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=82242NED&_theme=42
+        // producenten vertrouwen
+        // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=81234ned&_theme=185
 
+
+
+        function getYearArray() {
+            const currentDate = new Date();
+            const currentYear = currentDate.getFullYear().toString();
+            const lastYear = (currentDate.getFullYear() - 1).toString();
+            const currentMonth = currentDate.getMonth(); // January is month 0
+
+            // Check if the month is January (0) and return the array accordingly
+            // return currentMonth === 0 ? [`"${currentYear}"`] : [`"${currentYear}"`, `"${lastYear}"`];
+            return currentMonth === 0 ? [`${currentYear}`] : [`${currentYear}`, `${lastYear}`];
+        }
+
+        // Example usage
+        const yearArray = getYearArray();
+        console.log(yearArray);
 
         // testin ggettig the data sets  
         // const typedDataSetUrl = `${Service_industry_metadata.value.find(entity => entity.name === 'TypedDataSet').url}?$top=100`;
@@ -337,7 +359,7 @@
         // Fetch data for the specified sectors
         Service_fetchTypedDataSet(['2024', '2023'], ['354200 ', '383100 ', '389100 ','391600 ','402000 ','410200 ','B000655'], "ServiceTable", Service_industry_metadata);
 
-
+        
 
 //  -----------------------------------------------------------------------------------------------------------
 //  PPI -------------------------------------------------------------------------------------------  
