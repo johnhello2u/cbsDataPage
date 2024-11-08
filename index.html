@@ -506,9 +506,12 @@
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                // Filter out entries where Perioden ends with "00"
-                const filteredData = data.value.filter(item => !item.Perioden.endsWith('00')).reverse().slice(0, 12);       
-                // console.log('Fetched Data:', JSON.stringify(filteredData, null, 2)); // Log the fetched data
+                const filteredData = data.value
+                .filter(item => 
+                    !item.Perioden.endsWith('00') &&
+                    !(item.Perioden.charAt(4) === 'K'))
+                .reverse()
+                .slice(0,12);
 
                 Housing_populateTable(filteredData, html_table);
                 
