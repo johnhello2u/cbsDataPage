@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Netherlands stats</title>
     <script src="https://cdn.jsdelivr.net/npm/@javascript/danfojs@0.5.2/lib/bundle.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -14,53 +15,107 @@
         These indices provide insights into monthly and annual changes, benchmarking against respective base years.</p>
     </header>
 
-    <h1>Consumer Price Index</h1>
-    <p>index 2015=100</p>
-    <table id="CpiTable">
-        <thead>
-            <tr>
-                <th>Period</th>
-                <th>Index</th> <!--Consumentenprijsindex alle huishoudens 2015 = 100 -->
-                <th>Month mutation</th> 
-                <th>Year mutation</th> <!--Procentuele mutatie van de CPI t.o.v. dezelfde periode een jaar eerder-->
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+    <div class="container mt-4">
 
-    <h1>Producer Price Index</h1>
-    <p>index 2021=100</p>
-    <table id="PpiTable">
-        <thead>
-            <tr>
-                <th>Period</th>
-                <th>Index</th> 
-                <th>Month mutation</th> 
-                <th>Year mutation</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+        <div class="row">
+            <!-- Consumer Price Index -->
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h1 class="card-title">Consumer Price Index</h1>
+                        <p class="card-text">index 2015=100</p>
+                        <table id="CpiTable" class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Period</th>
+                                    <th>Index</th>
+                                    <th>Month mutation</th>
+                                    <th>Year mutation</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Producer Price Index -->
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h1 class="card-title">Producer Price Index</h1>
+                        <p class="card-text">index 2021=100</p>
+                        <table id="PpiTable" class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Period</th>
+                                    <th>Index</th>
+                                    <th>Month mutation</th>
+                                    <th>Year mutation</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Trade & Services Turnover Index -->
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h1 class="card-title">Trade & Services Turnover Index</h1>
+                        <p class="card-text">index 2021=100</p>
+                        <div class="table-responsive">
+                            <table id="ServiceTable" class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Period</th>
+                                        <th>Trade</th>
+                                        <th>Transport & storage</th>
+                                        <th>Catering</th>
+                                        <th>Information & communication</th>
+                                        <th>Real estate</th>
+                                        <th>Services</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- New Housing Price/Sale Index -->
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h1 class="card-title">New Housing Price/Sale Index</h1>
+                        <p class="card-text">index 2020=100</p>
+                        <div class="table-responsive">
+                            <table id="HousingTable" class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Period</th>
+                                        <th>Index</th>
+                                        <th>Month change</th>
+                                        <th>Year change</th>
+                                        <th>Sold objects</th>
+                                        <th>Year change</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <h1>Trade & Services turnover and production Index</h1>
-    <p>index 2021=100</p>
-    <table id="ServiceTable">
-        <thead>
-            <tr>
-                <!--  -->
-                <th>Period</th>
-                <th>Trade</th> <!-- G Handel 354200 -->
-                <th>Transport & storage</th> <!-- H Vervoer en opslag 383100 -->
-                <th>Catering</th> <!-- I Horeca 389100 -->
-                <th>Information & communication</th> <!-- J Informatie en communicatie 391600 -->
-                <th>Realestate</th> <!-- L Verhuur en handel van onroerend goed 402000 -->
-                <th>Services</th> <!-- N Verhuur en overige zakelijke diensten 410200 -->
-                <th>Total</th> <!-- H+I+J+L+M+N Totaal dienstverlening B000655 -->
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
 
+    </div>
+    
     <footer>
         <p>© 2024 Iosefka (JC) management consulting services All Rights Reserved</p>
     </footer>
@@ -108,8 +163,20 @@
             ]
             };
 
-
-
+        const new_housing_metadata = {
+                "odata.metadata": "https://opendata.cbs.nl/ODataApi/OData/85773NED/$metadata",
+                "value": [
+                    {"name": "TableInfos", "url": "https://opendata.cbs.nl/ODataApi/odata/85773NED/TableInfos"},
+                    {"name": "UntypedDataSet", "url": "https://opendata.cbs.nl/ODataApi/odata/85773NED/UntypedDataSet"},
+                    {"name": "TypedDataSet", "url": "https://opendata.cbs.nl/ODataApi/odata/85773NED/TypedDataSet"},
+                    {"name": "DataProperties", "url": "https://opendata.cbs.nl/ODataApi/odata/85773NED/DataProperties"},
+                    {"name": "CategoryGroups", "url": "https://opendata.cbs.nl/ODataApi/odata/85773NED/CategoryGroups"},
+                    {"name": "Perioden", "url": "https://opendata.cbs.nl/ODataApi/odata/85773NED/Perioden"}
+                ]
+            };
+        
+        // harmonized cpi
+        // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=83135NED&_theme=387
         // employment per month 
         // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=83451NED&_theme=6
         // unemployment
@@ -118,30 +185,46 @@
         // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=82242NED&_theme=42
         // producenten vertrouwen
         // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=81234ned&_theme=185
+        // bevolking 
+        // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=83474NED&_theme=62
+        // woningen
+        // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=85773NED&_theme=395 XXXX
+        // bouwontwikkeling
+        // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=85809NED&_theme=98
+        // inputprijzen nieuwbouw
+        // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=80444ned&_theme=393
+        // inputprijzen per bouwtype 
+        // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=83705NED&_theme=99
+        // bouwvergunningen en nieuw/bestaande bouw 
+        // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=83667NED&_theme=100
+        // energy in kwh 
+        // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=84575NED&_theme=125
+        // producer sentiment 
+        // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=81234ned&_theme=185
+        // consumer sentiment 
+        // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=83693NED&_theme=189
+        // tourism 
+        // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=82058NED&_theme=445
 
+        
 
-
+        // YEAR  
         function getYearArray() {
             const currentDate = new Date();
             const currentYear = currentDate.getFullYear().toString();
             const lastYear = (currentDate.getFullYear() - 1).toString();
             const currentMonth = currentDate.getMonth(); // January is month 0
-
-            // Check if the month is January (0) and return the array accordingly
-            // return currentMonth === 0 ? [`"${currentYear}"`] : [`"${currentYear}"`, `"${lastYear}"`];
             return currentMonth === 0 ? [`${currentYear}`] : [`${currentYear}`, `${lastYear}`];
         }
-
-        // Example usage
         const yearArray = getYearArray();
-        console.log(yearArray);
+
+
+
 
         // testin ggettig the data sets  
         // const typedDataSetUrl = `${Service_industry_metadata.value.find(entity => entity.name === 'TypedDataSet').url}?$top=100`;
         // const typedDataSetUrl = `${Service_industry_metadata.value.find(entity => entity.name === 'TypedDataSet').url}?$top=100&$filter=startswith(Perioden, '2024')`;
-        const typedDataSetUrl = `${Service_industry_metadata.value.find(entity => entity.name === 'TypedDataSet').url}?$top=100&$filter=startswith(Perioden, '2024') and BedrijfstakkenBranchesSBI2008 eq '354200 '`;
-
-
+        const typedDataSetUrl = `${new_housing_metadata.value.find(entity => entity.name === 'TypedDataSet').url}?$top=100&$filter=startswith(Perioden, '2024') and BedrijfstakkenBranchesSBI2008 eq '354200 '`;
         fetch(typedDataSetUrl, {
             method: 'GET',
             headers: {
@@ -228,7 +311,7 @@
                 }
         }
         // Example usage
-        fetchTypedDataSet(['2024', '2023'], 'T001112  ', "CpiTable", CPI_metadata); 
+        fetchTypedDataSet(yearArray, 'T001112  ', "CpiTable", CPI_metadata); 
 
 
 
@@ -240,96 +323,177 @@
 //  -----------------------------------------------------------------------------------------------------------
 //  Service -------------------------------------------------------------------------------------------  
 //  -----------------------------------------------------------------------------------------------------------  
-        function getTypedDataSetUrl_Service(years, AlleBedrijfstakken, metadata) {
+    function getTypedDataSetUrl_Service(years, AlleBedrijfstakken, metadata) {
+        // Create a dynamic filter based on the years provided
+        const yearFilters = years.map(year => `substringof('${year}', Perioden)`).join(' or ');
+        // const btak = `BedrijfstakkenBranchesSBI2008 eq '${AlleBedrijfstakken.join(",")}'`;
+        const btak = `BedrijfstakkenBranchesSBI2008 eq '${AlleBedrijfstakken.join("' or BedrijfstakkenBranchesSBI2008 eq '")}'`;
+        // const afzetFilter = `Afzet eq '${Afzet.join(",")}'`; 
+        const filter = `${yearFilters} and ${btak}`;
+        const typedDataSetUrl = metadata.value.find(entity => entity.name === 'TypedDataSet').url + 
+            `?$filter=${filter}&$orderby=Perioden`; // Change ordering and top values as needed
+        return typedDataSetUrl;
+    }
+    // const datadata = getTypedDataSetUrl_Service(['2024', '2023'], ['354200'], Service_industry_metadata);
+
+    function Service_populateTable(data, tableName) {
+        const tableBody = document.querySelector(`#${tableName} tbody`);
+        tableBody.innerHTML = '';
+        const periods = {}; // Object to store data by period
+
+        // Initialize the structure for each period
+        data.forEach(item => {
+            if (!periods[item.Perioden]) {
+                periods[item.Perioden] = {
+                    "354200": null,
+                    "383100": null,
+                    "389100": null,
+
+                    "391600": null,
+                    "402000": null,
+                    "B000655": null,
+                    "410200": null
+                };
+            }
+            // Assign values to the respective sectors
+            if (item.BedrijfstakkenBranchesSBI2008.trim() === "354200") {
+                periods[item.Perioden]["354200"] = item.Ongecorrigeerd_1;
+            } else if (item.BedrijfstakkenBranchesSBI2008.trim() === "383100") {
+                periods[item.Perioden]["383100"] = item.Ongecorrigeerd_1;
+            } else if (item.BedrijfstakkenBranchesSBI2008.trim() === "389100") {
+                periods[item.Perioden]["389100"] = item.Ongecorrigeerd_1;
+            }
+
+            else if (item.BedrijfstakkenBranchesSBI2008.trim() === "391600") {
+                periods[item.Perioden]["391600"] = item.Ongecorrigeerd_1;
+            }
+            else if (item.BedrijfstakkenBranchesSBI2008.trim() === "402000") {
+                periods[item.Perioden]["402000"] = item.Ongecorrigeerd_1;
+            }
+            else if (item.BedrijfstakkenBranchesSBI2008.trim() === "B000655") {
+                periods[item.Perioden]["B000655"] = item.Ongecorrigeerd_1;
+            }
+            else if (item.BedrijfstakkenBranchesSBI2008.trim() === "410200") {
+                periods[item.Perioden]["410200"] = item.Ongecorrigeerd_1;
+            }
+
+        });
+        console.log(periods);
+        // Convert periods object to an array and get the last 12 entries
+        const last12Entries = Object.entries(periods).slice(0,12);
+
+        // Populate the table rows
+        for (const [period, values] of last12Entries) {
+            const row = document.createElement("tr");
+            const periodCell = document.createElement("td");
+            periodCell.textContent = period; // Add period
+            row.appendChild(periodCell);
+
+            // Add cells for each sector
+            row.appendChild(createCell(values["354200"]));
+            row.appendChild(createCell(values["383100"]));
+            row.appendChild(createCell(values["389100"]));
+
+            row.appendChild(createCell(values["391600"]));
+            row.appendChild(createCell(values["402000"]));
+            row.appendChild(createCell(values["410200"]));
+            row.appendChild(createCell(values["B000655"]));
+
+            tableBody.appendChild(row);
+        }
+    }
+
+    // Helper function to create a table cell
+    function createCell(value) {
+        const cell = document.createElement("td");
+        cell.textContent = value !== null ? value : ""; 
+        return cell;
+    }
+
+    async function Service_fetchTypedDataSet(years, AlleBedrijfstakken, html_table, metaTable) {
+        const typedDataSetUrl = getTypedDataSetUrl_Service(years, AlleBedrijfstakken, metaTable);
+        try {
+            const response = await fetch(typedDataSetUrl, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            // Filter out entries where Perioden ends with "00" and others as needed
+            const filteredData = data.value
+                .filter(item => 
+                    !item.Perioden.endsWith('00') &&
+                    !(item.Perioden.charAt(4) === 'K'))
+                .reverse();
+                // .slice(0, 12);
+            // console.log(filteredData);
+            Service_populateTable(filteredData, html_table);
+        } catch (error) {
+            console.error('Error fetching TypedDataSet:', error);
+        }
+    }
+
+    // Fetch data for the specified sectors
+    Service_fetchTypedDataSet(yearArray, ['354200 ', '383100 ', '389100 ','391600 ','402000 ','410200 ','B000655'], "ServiceTable", Service_industry_metadata);
+
+
+
+
+
+//  -----------------------------------------------------------------------------------------------------------
+//  Housing -------------------------------------------------------------------------------------------  
+//  -----------------------------------------------------------------------------------------------------------  
+    function getTypedDataSetUrl_Housing(years, category, metadata) {
             // Create a dynamic filter based on the years provided
             const yearFilters = years.map(year => `substringof('${year}', Perioden)`).join(' or ');
-            // const btak = `BedrijfstakkenBranchesSBI2008 eq '${AlleBedrijfstakken.join(",")}'`;
-            const btak = `BedrijfstakkenBranchesSBI2008 eq '${AlleBedrijfstakken.join("' or BedrijfstakkenBranchesSBI2008 eq '")}'`;
-            // const afzetFilter = `Afzet eq '${Afzet.join(",")}'`; 
-            const filter = `${yearFilters} and ${btak}`;
+            // const categoryFilter = `Bestedingscategorieen eq '${category}'`;
+            // const filter = `${yearFilters} and ${categoryFilter}`;
+            const filter = `${yearFilters}`;
+            // Construct the final URL
             const typedDataSetUrl = metadata.value.find(entity => entity.name === 'TypedDataSet').url + 
                 `?$filter=${filter}&$orderby=Perioden`; // Change ordering and top values as needed
             return typedDataSetUrl;
         }
-        // const datadata = getTypedDataSetUrl_Service(['2024', '2023'], ['354200'], Service_industry_metadata);
 
-        function Service_populateTable(data, tableName) {
+        function Housing_populateTable(data, tableName) {
             const tableBody = document.querySelector(`#${tableName} tbody`);
+            // Clear the existing table rows
             tableBody.innerHTML = '';
-            const periods = {}; // Object to store data by period
-
-            // Initialize the structure for each period
+            // Loop through each item and create a row with the required columns
             data.forEach(item => {
-                if (!periods[item.Perioden]) {
-                    periods[item.Perioden] = {
-                        "354200": null,
-                        "383100": null,
-                        "389100": null,
-
-                        "391600": null,
-                        "402000": null,
-                        "B000655": null,
-                        "410200": null
-                    };
-                }
-                // Assign values to the respective sectors
-                if (item.BedrijfstakkenBranchesSBI2008.trim() === "354200") {
-                    periods[item.Perioden]["354200"] = item.Ongecorrigeerd_1;
-                } else if (item.BedrijfstakkenBranchesSBI2008.trim() === "383100") {
-                    periods[item.Perioden]["383100"] = item.Ongecorrigeerd_1;
-                } else if (item.BedrijfstakkenBranchesSBI2008.trim() === "389100") {
-                    periods[item.Perioden]["389100"] = item.Ongecorrigeerd_1;
-                }
-
-                else if (item.BedrijfstakkenBranchesSBI2008.trim() === "391600") {
-                    periods[item.Perioden]["391600"] = item.Ongecorrigeerd_1;
-                }
-                else if (item.BedrijfstakkenBranchesSBI2008.trim() === "402000") {
-                    periods[item.Perioden]["402000"] = item.Ongecorrigeerd_1;
-                }
-                else if (item.BedrijfstakkenBranchesSBI2008.trim() === "B000655") {
-                    periods[item.Perioden]["B000655"] = item.Ongecorrigeerd_1;
-                }
-                else if (item.BedrijfstakkenBranchesSBI2008.trim() === "410200") {
-                    periods[item.Perioden]["410200"] = item.Ongecorrigeerd_1;
-                }
-
-            });
-            console.log(periods);
-            // Convert periods object to an array and get the last 12 entries
-            const last12Entries = Object.entries(periods).slice(0,12);
-
-            // Populate the table rows
-            for (const [period, values] of last12Entries) {
                 const row = document.createElement("tr");
+                // Create cells for each column
                 const periodCell = document.createElement("td");
-                periodCell.textContent = period; // Add period
+                periodCell.textContent = item.Perioden;
                 row.appendChild(periodCell);
+                const indexCell = document.createElement("td");
+                indexCell.textContent = item.PrijsindexVerkoopprijzen_1;
+                row.appendChild(indexCell);
+                const maandmutatieCell = document.createElement("td");
+                maandmutatieCell.textContent = item.OntwikkelingTOVVoorgaandePeriode_2;
+                row.appendChild(maandmutatieCell);
+                const jaarmutatieCell = document.createElement("td");
+                jaarmutatieCell.textContent = item.OntwikkelingTOVEenJaarEerder_3;
+                row.appendChild(jaarmutatieCell);
 
-                // Add cells for each sector
-                row.appendChild(createCell(values["354200"]));
-                row.appendChild(createCell(values["383100"]));
-                row.appendChild(createCell(values["389100"]));
-
-                row.appendChild(createCell(values["391600"]));
-                row.appendChild(createCell(values["402000"]));
-                row.appendChild(createCell(values["410200"]));
-                row.appendChild(createCell(values["B000655"]));
-
+                const objects_sale_Cell = document.createElement("td");
+                objects_sale_Cell.textContent = item.VerkochteWoningen_4;
+                row.appendChild(objects_sale_Cell);
+                const objects_jaarmutatieCell = document.createElement("td");
+                objects_jaarmutatieCell.textContent = item.OntwikkelingTOVEenJaarEerder_6;
+                row.appendChild(objects_jaarmutatieCell);
+                // Append the row to the table body
                 tableBody.appendChild(row);
-            }
+            });
         }
 
-        // Helper function to create a table cell
-        function createCell(value) {
-            const cell = document.createElement("td");
-            cell.textContent = value !== null ? value : ""; 
-            return cell;
-        }
-
-
-        async function Service_fetchTypedDataSet(years, AlleBedrijfstakken, html_table, metaTable) {
-            const typedDataSetUrl = getTypedDataSetUrl_Service(years, AlleBedrijfstakken, metaTable);
+        async function Housing_fetchTypedDataSet(years, category, html_table, metaTable) {
+            const typedDataSetUrl = getTypedDataSetUrl_Housing(years, category, metaTable);
             try {
                 const response = await fetch(typedDataSetUrl, {
                     method: 'GET',
@@ -342,98 +506,24 @@
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                // Filter out entries where Perioden ends with "00" and others as needed
-                const filteredData = data.value
-                    .filter(item => 
-                        !item.Perioden.endsWith('00') &&
-                        !(item.Perioden.charAt(4) === 'K'))
-                    .reverse();
-                    // .slice(0, 12);
-                // console.log(filteredData);
-                Service_populateTable(filteredData, html_table);
+                // Filter out entries where Perioden ends with "00"
+                const filteredData = data.value.filter(item => !item.Perioden.endsWith('00')).reverse().slice(0, 12);       
+                // console.log('Fetched Data:', JSON.stringify(filteredData, null, 2)); // Log the fetched data
+
+                Housing_populateTable(filteredData, html_table);
+                
             } catch (error) {
                 console.error('Error fetching TypedDataSet:', error);
-            }
+                }
         }
-
-        // Fetch data for the specified sectors
-        Service_fetchTypedDataSet(['2024', '2023'], ['354200 ', '383100 ', '389100 ','391600 ','402000 ','410200 ','B000655'], "ServiceTable", Service_industry_metadata);
-
-        
-
-//  -----------------------------------------------------------------------------------------------------------
-//  PPI -------------------------------------------------------------------------------------------  
-//  -----------------------------------------------------------------------------------------------------------  
-        // function getTypedDataSetUrl_PPI(years, AlleBedrijfstakken, Afzet, metadata) {
-        //     // Create a dynamic filter based on the years provided
-        //     const yearFilters = years.map(year => `substringof('${year}', Perioden)`).join(' or ');
-        //     const btak = `AlleBedrijfstakken eq '${AlleBedrijfstakken.join(",")}'`;
-        //     const afzetFilter = `Afzet eq '${Afzet.join(",")}'`; 
-        //     const filter = `${yearFilters} and ${btak} and ${afzetFilter}`;
-        //     const typedDataSetUrl = metadata.value.find(entity => entity.name === 'TypedDataSet').url + 
-        //         `?$filter=${filter}&$orderby=Perioden`; // Change ordering and top values as needed
-        //     return typedDataSetUrl;
-        // }
-        // // const datadata = getTypedDataSetUrl_PPI(['2024', '2023'], ['300002'],['A044074'], PPI_metadata);
-        // function PPI_populateTable(data, tableName) {
-        //     const tableBody = document.querySelector(`#${tableName} tbody`);
-        //     tableBody.innerHTML = '';
-        //     data.forEach(item => {
-        //         const row = document.createElement("tr");
-        //         const periodCell = document.createElement("td");
-        //         periodCell.textContent = item.Perioden;
-        //         row.appendChild(periodCell);
-        //         const cpiCell = document.createElement("td");
-        //         cpiCell.textContent = item.ProducentenprijsindexPPI_1;
-        //         row.appendChild(cpiCell);
-        //         const maandmutatieCell = document.createElement("td");
-        //         maandmutatieCell.textContent = item.MaandmutatiePPI_2;
-        //         row.appendChild(maandmutatieCell);
-        //         const jaarmutatieCell = document.createElement("td");
-        //         jaarmutatieCell.textContent = item.JaarmutatiePPI_3;
-        //         row.appendChild(jaarmutatieCell);
-        //         tableBody.appendChild(row);
-        //     });
-        // }
-
-        // export async function PPI_fetchTypedDataSet(years, AlleBedrijfstakken, Afzet, html_table, metaTable) {
-        //     const typedDataSetUrl = getTypedDataSetUrl_PPI(years, AlleBedrijfstakken, Afzet, metaTable);
-        //     try {
-        //         const response = await fetch(typedDataSetUrl, {
-        //             method: 'GET',
-        //             headers: {
-        //                 'Accept': 'application/json',
-        //                 'Content-Type': 'application/json'
-        //             }
-        //         });
-        //         if (!response.ok) {
-        //             throw new Error(`HTTP error! status: ${response.status}`);
-        //         }
-        //         const data = await response.json();
-        //         // Filter out entries where Perioden ends with "00"
-        //         const filteredData = data.value.filter(item => !item.Perioden.endsWith('00')).reverse().slice(0, 12);  
-
-
-        //         PPI_populateTable(filteredData, html_table);
-                
-        //     } catch (error) {
-        //         console.error('Error fetching TypedDataSet:', error);
-        //         }
-        // }
         // Example usage
-        // PPI_fetchTypedDataSet(['2024', '2023'],['300002'],['A044074'], "PpiTable", PPI_metadata); 
-
-//  -----------------------------------------------------------------------------------------------------------
-//  FUNCTION TO GET -------------------------------------------------------------------------------------------  
-//  -----------------------------------------------------------------------------------------------------------      
-        // fetchTypedDataSet(['2024', '2023'], 'T001112  ', "PpiTable"); 
-
+        Housing_fetchTypedDataSet(yearArray, 'T001112  ', "HousingTable", new_housing_metadata); 
     </script>
 
 
 <script type="module">
     import { PPI_fetchTypedDataSet } from './myfuncs.js';
-    PPI_fetchTypedDataSet(['2024', '2023'],['300002'],['A044074'], "PpiTable", PPI_metadata); 
+    PPI_fetchTypedDataSet(yearArray,['300002'],['A044074'], "PpiTable", PPI_metadata); 
 </script>
 
 

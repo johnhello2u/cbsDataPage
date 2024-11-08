@@ -32,6 +32,12 @@ header p {
     color: #d9e2ec; /* Lighter text for description */
 }
 
+/* Paragraph Styling */
+p {
+    padding: 0 20px; /* Add padding to align text inside <p> with other elements */
+    margin: 15px 0;
+}
+
 /* Heading Styling */
 h1 {
     text-align: center;
@@ -43,15 +49,27 @@ h1 {
     font-weight: 500;
 }
 
+.card-title {
+    font-size: 1.4em;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #2c3e50; /* Darker color for titles */
+}
+
+.card-text {
+    font-size: 1em;
+    margin-bottom: 20px;
+    color: #6c757d; 
+}
+
+.table-hover tbody tr:hover {
+    background-color: #254453; /* Light blue hover color */
+}
+
 /* Table Styling */
 table {
     width: 100%;
-    margin-bottom: 40px;
     border-collapse: collapse;
-    background-color: #ffffff; /* Clean white background for tables */
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
 }
 
 thead {
@@ -79,11 +97,22 @@ tbody tr:nth-child(even) {
     background-color: #edf7f9; /* Very light teal for even rows */
 }
 
-tbody tr:hover {
+.table tbody tr:hover {
     background-color: #005678; /* Darker teal on hover */
     color: #ffffff; /* White text on hover */
     cursor: pointer;
 }
+
+/* Ensure tables fit within the card without overflowing */
+.table {
+    width: 100%;
+    table-layout: auto; /* Allows columns to adjust automatically */
+}
+
+.table-wrapper {
+    overflow-x: auto; /* Adds a horizontal scrollbar if needed */
+}
+
 
 /* Footer Styling */
 footer {
@@ -98,4 +127,5 @@ footer {
 footer p {
     margin: 10px 0;
     color: #7a7a7a;
+    padding: 0 20px; /* Align footer <p> as well */
 }
