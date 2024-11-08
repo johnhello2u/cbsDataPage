@@ -299,8 +299,12 @@
                 }
                 const data = await response.json();
                 // Filter out entries where Perioden ends with "00"
-                const filteredData = data.value.filter(item => !item.Perioden.endsWith('00')).reverse().slice(0, 12);       
-                // console.log('Fetched Data:', JSON.stringify(filteredData, null, 2)); // Log the fetched data
+                const filteredData = data.value.filter(item => !item.Perioden.endsWith('00')).reverse().slice(0, 12)       
+                    .map(item => {
+                        // Modify the Perioden format by replacing MM with a hyphen
+                        item.Perioden = item.Perioden.replace(/MM/, '_');
+                        return item;
+                    });
 
                 // Populate the table with filtered data
                 if (html_table=="CpiTable") {
@@ -429,9 +433,12 @@
                 .filter(item => 
                     !item.Perioden.endsWith('00') &&
                     !(item.Perioden.charAt(4) === 'K'))
-                .reverse();
-                // .slice(0, 12);
-            // console.log(filteredData);
+                .reverse()
+                .map(item => {
+                    // Modify the Perioden format by replacing MM with a hyphen
+                    item.Perioden = item.Perioden.replace(/MM/, '_');
+                    return item;
+                });
             Service_populateTable(filteredData, html_table);
         } catch (error) {
             console.error('Error fetching TypedDataSet:', error);
@@ -511,7 +518,12 @@
                     !item.Perioden.endsWith('00') &&
                     !(item.Perioden.charAt(4) === 'K'))
                 .reverse()
-                .slice(0,12);
+                .slice(0,12)
+                .map(item => {
+                    // Modify the Perioden format by replacing MM with a hyphen
+                    item.Perioden = item.Perioden.replace(/MM/, '_');
+                    return item;
+                });
 
                 Housing_populateTable(filteredData, html_table);
                 

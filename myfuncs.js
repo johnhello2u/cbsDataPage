@@ -117,7 +117,12 @@
                 }
                 const data = await response.json();
                 // Filter out entries where Perioden ends with "00"
-                const filteredData = data.value.filter(item => !item.Perioden.endsWith('00')).reverse().slice(0, 12);  
+                const filteredData = data.value.filter(item => !item.Perioden.endsWith('00')).reverse().slice(0, 12)
+                .map(item => {
+                    // Modify the Perioden format by replacing MM with a hyphen
+                    item.Perioden = item.Perioden.replace(/MM/, '_');
+                    return item;
+                });  
 
 
                 PPI_populateTable(filteredData, html_table);
