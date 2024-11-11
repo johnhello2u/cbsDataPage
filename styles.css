@@ -1,8 +1,14 @@
+.custom-gutter .col-lg-6,
+.custom-gutter .col-sm-12 {
+    padding-left: 2px;   /* Set to smaller value */
+    padding-right: 2px;  /* Set to smaller value */
+}
+
 /* General Body Styling */
 body {
     font-family: 'Arial', sans-serif;
     line-height: 1.6;
-    margin: -25px;
+    margin: 0px;
     padding: 0px;
     background-color: #f4f8fb; /* Softer light background */
     color: #333;
@@ -56,37 +62,42 @@ h1 {
     color: #2c3e50; /* Darker color for titles */
 }
 
+.card-body {
+    padding: 9px;  /* Adjust this value as needed */
+}
+
 .card-text {
     font-size: 1em;
     margin-bottom: 20px;
     color: #6c757d; 
 }
 
-.table-hover tbody tr:hover {
-    background-color: #254453; /* Light blue hover color */
-}
-
 /* Table Styling */
 table {
     width: 100%;
     border-collapse: collapse;
+    table-layout: auto;
 }
 
 thead {
-    background-color: #00799e; /* Professional teal */
-    color: #ffffff;
+    background-color: #e9f0f1; 
+    color: #312f2f;
 }
 
+
 th, td {
-    padding: 15px 12px;
+    padding: 6px 10px; /* Reduced padding for compact rows */
+    font-size: 0.9em; /* Slightly smaller font size */
+    line-height: 0.9; /* Reduced line height to minimize space */
     text-align: left;
-    border-bottom: 1px solid #e0e0e0;
+    white-space: nowrap; /* Prevent text wrapping in table headers */
 }
 
 th {
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 0.9em;
+    font-weight: 600; /* Bold text for headers */
+    /* text-transform: uppercase;  */
+    /* background-color: #006f7a;  */
+    padding: 6px 10px; /* Increased padding for header row to make it stand out */
 }
 
 tbody tr:nth-child(odd) {
@@ -98,7 +109,7 @@ tbody tr:nth-child(even) {
 }
 
 .table tbody tr:hover {
-    background-color: #005678; /* Darker teal on hover */
+    background-color: #96a5aa; /* Darker teal on hover */
     color: #ffffff; /* White text on hover */
     cursor: pointer;
 }
