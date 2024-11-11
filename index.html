@@ -25,17 +25,19 @@
                         <h1 class="card-title">Consumer Price Index</h1>
                         <p id="cpi_mod" class="card-text" style="margin-bottom: 0;">Last modified:</p>
                         <p class="card-text" style="margin-top: 0px;">Index 2015 = 100</p>
-                        <table id="CpiTable" class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Period</th>
-                                    <th>Index</th>
-                                    <th>Month mutation</th>
-                                    <th>Year mutation</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table id="CpiTable" class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Period</th>
+                                        <th>Index</th>
+                                        <th>Month mutation</th>
+                                        <th>Year mutation</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -47,17 +49,19 @@
                         <h1 class="card-title">Producer Price Index</h1>
                         <p id="ppi_mod" class="card-text" style="margin-bottom: 0;">Last modified:</p>
                         <p class="card-text" style="margin-top: 0px;">Index 2021 = 100</p>
-                        <table id="PpiTable" class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Period</th>
-                                    <th>Index</th>
-                                    <th>Month mutation</th>
-                                    <th>Year mutation</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table id="PpiTable" class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Period</th>
+                                        <th>Index</th>
+                                        <th>Month mutation</th>
+                                        <th>Year mutation</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -328,7 +332,7 @@
                 ]);
 
                 if (!typedDataResponse.ok) {
-                    throw new Error(`HTTP error fetching CPI data! status: ${typedDataResponse.status}`);
+                    throw new Error(`HTTP error fetching data! status: ${typedDataResponse.status}`);
                 }
                 if (!tableInfosResponse.ok) {
                     throw new Error(`HTTP error fetching TableInfos data! status: ${tableInfosResponse.status}`);
