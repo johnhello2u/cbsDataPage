@@ -2,8 +2,8 @@
 body {
     font-family: 'Arial', sans-serif;
     line-height: 1.6;
-    margin: 0;
-    padding: 20px;
+    margin: -25px;
+    padding: 0px;
     background-color: #f4f8fb; /* Softer light background */
     color: #333;
 }
@@ -13,7 +13,7 @@ header {
     background-color: #003f5c; /* Deep blue background */
     color: white;
     padding: 30px 20px;
-    border-radius: 8px;
+    /* border-radius: 8px; */
     text-align: center;
     margin-bottom: 40px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Professional shadow */
@@ -129,3 +129,4 @@ footer p {
     color: #7a7a7a;
     padding: 0 20px; /* Align footer <p> as well */
 }
+

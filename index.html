@@ -11,11 +11,10 @@
 <body>
     <header>
         <h2>Statistical Data Overview</h2>
-        <p>This page displays economic indicators based on statistical data from the Dutch Central Bureau of Statistics (CBS). 
-        These indices provide insights into monthly and annual changes, benchmarking against respective base years.</p>
+        <p>Macro economic indicators based on statistical data from the Dutch Central Bureau of Statistics (CBS).</p>
     </header>
 
-    <div class="container-fluid mt-4">
+    <div class="container-fluid mt-4 extra-padding-sides">
         <!-- First row with two tables -->
         <div class="row">
             <!-- Consumer Price Index -->
@@ -23,7 +22,7 @@
                 <div class="card shadow">
                     <div class="card-body">
                         <h1 class="card-title">Consumer Price Index</h1>
-                        <p id="cpi_mod" class="card-text" style="margin-bottom: 0;">Last modified:</p>
+                        <p id="cpi_mod" class="card-text" style="margin-bottom: 0;"></p>
                         <p class="card-text" style="margin-top: 0px;">Index 2015 = 100</p>
                         <div class="table-responsive">
                             <table id="CpiTable" class="table table-hover">
@@ -47,7 +46,7 @@
                 <div class="card shadow">
                     <div class="card-body">
                         <h1 class="card-title">Producer Price Index</h1>
-                        <p id="ppi_mod" class="card-text" style="margin-bottom: 0;">Last modified:</p>
+                        <p id="ppi_mod" class="card-text" style="margin-bottom: 0;"></p>
                         <p class="card-text" style="margin-top: 0px;">Index 2021 = 100</p>
                         <div class="table-responsive">
                             <table id="PpiTable" class="table table-hover">
@@ -74,7 +73,7 @@
                 <div class="card shadow">
                     <div class="card-body">
                         <h1 class="card-title">Trade & Services Turnover Index</h1>
-                        <p id="services_mod" class="card-text" style="margin-bottom: 0;">Last modified:</p>
+                        <p id="services_mod" class="card-text" style="margin-bottom: 0;"></p>
                         <p class="card-text" style="margin-top: 0px;">Index 2021 = 100</p>
                         <div class="table-responsive">
                             <table id="ServiceTable" class="table table-hover">
@@ -102,7 +101,7 @@
                 <div class="card shadow">
                     <div class="card-body">
                         <h1 class="card-title">New Housing Price/Sale Index</h1>
-                        <p id="housing_mod" class="card-text" style="margin-bottom: 0;">Last modified:</p>
+                        <p id="housing_mod" class="card-text" style="margin-bottom: 0;"></p>
                         <p class="card-text" style="margin-top: 0px;">Index 2020 = 100</p>
                         <div class="table-responsive">
                             <table id="HousingTable" class="table table-hover">
@@ -283,7 +282,7 @@
             tableBody.innerHTML = '';
             // Update the "Last modified" text with the dynamic modifiedVariable
             if (lastModifiedElement) {
-                lastModifiedElement.textContent = `Last modified: ${formatDate(modifiedVariable)}`;
+                lastModifiedElement.textContent = `Last update: ${formatDate(modifiedVariable)}`;
             }
 
 
@@ -393,7 +392,7 @@
         tableBody.innerHTML = '';
 
         if (lastModifiedElement) {
-            lastModifiedElement.textContent = `Last modified: ${formatDate(modifiedVariable)}`;
+            lastModifiedElement.textContent = `Last update: ${formatDate(modifiedVariable)}`;
         }
         const periods = {}; // Object to store data by period
 
@@ -496,7 +495,6 @@
             const tableInfosData = await tableInfosResponse.json();
 
             const modifiedDate = tableInfosData.value.length > 0 ? tableInfosData.value[0].Modified : 'Not Available';
-            console.log(modifiedDate);
             const filteredData = typedData.value
                 .filter(item => 
                     !item.Perioden.endsWith('00') &&
@@ -535,11 +533,17 @@
             return typedDataSetUrl;
         }
 
-        function Housing_populateTable(data, tableName) {
+        function Housing_populateTable(data, tableName, modifiedVariable) {
             const tableBody = document.querySelector(`#${tableName} tbody`);
+            const lastModifiedElement = document.querySelector(`#housing_mod`);
             // Clear the existing table rows
             tableBody.innerHTML = '';
-            // Loop through each item and create a row with the required columns
+            
+            if (lastModifiedElement) {
+                lastModifiedElement.textContent = `Last update: ${formatDate(modifiedVariable)}`;
+            }
+
+
             data.forEach(item => {
                 const row = document.createElement("tr");
                 // Create cells for each column
@@ -569,19 +573,36 @@
 
         async function Housing_fetchTypedDataSet(years, category, html_table, metaTable) {
             const typedDataSetUrl = getTypedDataSetUrl_Housing(years, category, metaTable);
+            const tableInfosUrl = metaTable.value.find(entity => entity.name === 'TableInfos').url;
             try {
-                const response = await fetch(typedDataSetUrl, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
-                });
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                const [typedDataResponse, tableInfosResponse] = await Promise.all([
+                    fetch(typedDataSetUrl, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        }
+                    }),
+                    fetch(tableInfosUrl, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                ]);
+                if (!typedDataResponse.ok) {
+                    throw new Error(`HTTP error fetching data! status: ${typedDataResponse.status}`);
                 }
-                const data = await response.json();
-                const filteredData = data.value
+                if (!tableInfosResponse.ok) {
+                    throw new Error(`HTTP error fetching TableInfos data! status: ${tableInfosResponse.status}`);
+                }
+                const typedData = await typedDataResponse.json();
+                const tableInfosData = await tableInfosResponse.json();
+
+                const modifiedDate = tableInfosData.value.length > 0 ? tableInfosData.value[0].Modified : 'Not Available';
+
+                const filteredData = typedData.value
                 .filter(item => 
                     !item.Perioden.endsWith('00') &&
                     !(item.Perioden.charAt(4) === 'K'))
@@ -593,7 +614,7 @@
                     return item;
                 });
 
-                Housing_populateTable(filteredData, html_table);
+                Housing_populateTable(filteredData, html_table, modifiedDate);
                 
             } catch (error) {
                 console.error('Error fetching TypedDataSet:', error);

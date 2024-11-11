@@ -81,9 +81,13 @@
             return typedDataSetUrl;
         }
         // const datadata = getTypedDataSetUrl_PPI(['2024', '2023'], ['300002'],['A044074'], PPI_metadata);
-        function PPI_populateTable(data, tableName) {
+        function PPI_populateTable(data, tableName, modifiedVariable) {
             const tableBody = document.querySelector(`#${tableName} tbody`);
+            const lastModifiedElement = document.querySelector(`#ppi_mod`);
             tableBody.innerHTML = '';
+            if (lastModifiedElement) {
+                lastModifiedElement.textContent = `Last update: ${formatDate(modifiedVariable)}`;
+            }
             data.forEach(item => {
                 const row = document.createElement("tr");
                 const periodCell = document.createElement("td");
@@ -104,20 +108,36 @@
 
         export async function PPI_fetchTypedDataSet(years, AlleBedrijfstakken, Afzet, html_table, metaTable) {
             const typedDataSetUrl = getTypedDataSetUrl_PPI(years, AlleBedrijfstakken, Afzet, metaTable);
+            const tableInfosUrl = metaTable.value.find(entity => entity.name === 'TableInfos').url;
             try {
-                const response = await fetch(typedDataSetUrl, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
-                });
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                const [typedDataResponse, tableInfosResponse] = await Promise.all([
+                    fetch(typedDataSetUrl, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        }
+                    }),
+                    fetch(tableInfosUrl, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                ]);
+                if (!typedDataResponse.ok) {
+                    throw new Error(`HTTP error fetching data! status: ${typedDataResponse.status}`);
                 }
-                const data = await response.json();
-                // Filter out entries where Perioden ends with "00"
-                const filteredData = data.value.filter(item => !item.Perioden.endsWith('00')).reverse().slice(0, 12)
+                if (!tableInfosResponse.ok) {
+                    throw new Error(`HTTP error fetching TableInfos data! status: ${tableInfosResponse.status}`);
+                }
+                const typedData = await typedDataResponse.json();
+                const tableInfosData = await tableInfosResponse.json();
+
+                const modifiedDate = tableInfosData.value.length > 0 ? tableInfosData.value[0].Modified : 'Not Available';
+
+                const filteredData = typedData.value.filter(item => !item.Perioden.endsWith('00')).reverse().slice(0, 12)
                 .map(item => {
                     // Modify the Perioden format by replacing MM with a hyphen
                     item.Perioden = item.Perioden.replace(/MM/, '_');
@@ -125,7 +145,7 @@
                 });  
 
 
-                PPI_populateTable(filteredData, html_table);
+                PPI_populateTable(filteredData, html_table, modifiedDate);
                 
             } catch (error) {
                 console.error('Error fetching TypedDataSet:', error);
