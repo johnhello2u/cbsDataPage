@@ -88,7 +88,7 @@ thead {
 th, td {
     padding: 6px 10px; /* Reduced padding for compact rows */
     font-size: 0.9em; /* Slightly smaller font size */
-    line-height: 0.9; /* Reduced line height to minimize space */
+    line-height: 0.75; /* Reduced line height to minimize space */
     text-align: left;
     white-space: nowrap; /* Prevent text wrapping in table headers */
 }
