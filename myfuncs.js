@@ -106,6 +106,46 @@
             });
         }
 
+        function createPpiChart(data) {
+            // Extract labels (Periods) and data (Year mutation values) for the chart
+            const labels = data.map(item => item.Perioden);
+            const yearMutationData = data.map(item => parseFloat(item.JaarmutatiePPI_3));
+        
+            // Create the line chart
+            const ctx = document.getElementById('ppiChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Year Mutation (%)',
+                        data: yearMutationData,
+                        fill: false,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Period'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Year Mutation (%)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+
         export async function PPI_fetchTypedDataSet(years, AlleBedrijfstakken, Afzet, html_table, metaTable) {
             const typedDataSetUrl = getTypedDataSetUrl_PPI(years, AlleBedrijfstakken, Afzet, metaTable);
             const tableInfosUrl = metaTable.value.find(entity => entity.name === 'TableInfos').url;
@@ -146,6 +186,7 @@
 
 
                 PPI_populateTable(filteredData, html_table, modifiedDate);
+                createPpiChart(filteredData.reverse());
                 
             } catch (error) {
                 console.error('Error fetching TypedDataSet:', error);

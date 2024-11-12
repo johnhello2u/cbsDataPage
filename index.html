@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Netherlands stats</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@javascript/danfojs@0.5.2/lib/bundle.min.js"></script>
     <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"> -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -49,6 +50,7 @@
                         <h1 class="card-title">Producer Price Index</h1>
                         <p id="ppi_mod" class="card-text" style="margin-bottom: 0;"></p>
                         <p class="card-text" style="margin-top: 0px;">Index 2021 = 100</p>
+                        <canvas id="ppiChart" style="margin-bottom: 10px;"></canvas>
                         <div class="table-responsive">
                             <table id="PpiTable" class="table table-hover">
                                 <thead>
@@ -110,10 +112,10 @@
                                     <tr>
                                         <th>Period</th>
                                         <th>Index</th>
-                                        <th>Month change</th>
-                                        <th>Year change</th>
+                                        <th>Month mutation</th>
+                                        <th>Year mutation</th>
                                         <th>Sold objects</th>
-                                        <th>Year change</th>
+                                        <th>Year mutation</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
