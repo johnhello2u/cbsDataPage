@@ -78,6 +78,7 @@
                         <h1 class="card-title">Trade & Services Turnover Index</h1>
                         <p id="services_mod" class="card-text" style="margin-bottom: 0;"></p>
                         <p class="card-text" style="margin-top: 0px;">Index 2021 = 100</p>
+                        <canvas id="serviceChart" style="margin-bottom: 10px"></canvas>
                         <div class="table-responsive">
                             <table id="ServiceTable" class="table table-hover">
                                 <thead>
@@ -258,7 +259,7 @@
         })
         .then(data => {
             // console.log("FETCHFETCH:", data.value.slice(0, 5)); // Display first 5 entries as sample
-            console.log("FETCHFETCH:", JSON.stringify(data.value.slice(0, 100), null, 2));
+            // console.log("FETCHFETCH:", JSON.stringify(data.value.slice(0, 100), null, 2));
         })
 
 
@@ -406,35 +407,38 @@
                     "354200": null,
                     "383100": null,
                     "389100": null,
-
                     "391600": null,
                     "402000": null,
                     "B000655": null,
                     "410200": null
                 };
             }
+
+            // Assign values to respective sectors
+            const sector = item.BedrijfstakkenBranchesSBI2008.trim();
+            periods[item.Perioden][sector] = item.Ongecorrigeerd_1;
+            
             // Assign values to the respective sectors
-            if (item.BedrijfstakkenBranchesSBI2008.trim() === "354200") {
-                periods[item.Perioden]["354200"] = item.Ongecorrigeerd_1;
-            } else if (item.BedrijfstakkenBranchesSBI2008.trim() === "383100") {
-                periods[item.Perioden]["383100"] = item.Ongecorrigeerd_1;
-            } else if (item.BedrijfstakkenBranchesSBI2008.trim() === "389100") {
-                periods[item.Perioden]["389100"] = item.Ongecorrigeerd_1;
-            }
+            // if (item.BedrijfstakkenBranchesSBI2008.trim() === "354200") {
+            //     periods[item.Perioden]["354200"] = item.Ongecorrigeerd_1;
+            // } else if (item.BedrijfstakkenBranchesSBI2008.trim() === "383100") {
+            //     periods[item.Perioden]["383100"] = item.Ongecorrigeerd_1;
+            // } else if (item.BedrijfstakkenBranchesSBI2008.trim() === "389100") {
+            //     periods[item.Perioden]["389100"] = item.Ongecorrigeerd_1;
+            // }
 
-            else if (item.BedrijfstakkenBranchesSBI2008.trim() === "391600") {
-                periods[item.Perioden]["391600"] = item.Ongecorrigeerd_1;
-            }
-            else if (item.BedrijfstakkenBranchesSBI2008.trim() === "402000") {
-                periods[item.Perioden]["402000"] = item.Ongecorrigeerd_1;
-            }
-            else if (item.BedrijfstakkenBranchesSBI2008.trim() === "B000655") {
-                periods[item.Perioden]["B000655"] = item.Ongecorrigeerd_1;
-            }
-            else if (item.BedrijfstakkenBranchesSBI2008.trim() === "410200") {
-                periods[item.Perioden]["410200"] = item.Ongecorrigeerd_1;
-            }
-
+            // else if (item.BedrijfstakkenBranchesSBI2008.trim() === "391600") {
+            //     periods[item.Perioden]["391600"] = item.Ongecorrigeerd_1;
+            // }
+            // else if (item.BedrijfstakkenBranchesSBI2008.trim() === "402000") {
+            //     periods[item.Perioden]["402000"] = item.Ongecorrigeerd_1;
+            // }
+            // else if (item.BedrijfstakkenBranchesSBI2008.trim() === "B000655") {
+            //     periods[item.Perioden]["B000655"] = item.Ongecorrigeerd_1;
+            // }
+            // else if (item.BedrijfstakkenBranchesSBI2008.trim() === "410200") {
+            //     periods[item.Perioden]["410200"] = item.Ongecorrigeerd_1;
+            // }
         });
 
         // Convert periods object to an array and get the last 12 entries
@@ -448,18 +452,60 @@
             row.appendChild(periodCell);
 
             // Add cells for each sector
-            row.appendChild(createCell(values["354200"]));
-            row.appendChild(createCell(values["383100"]));
-            row.appendChild(createCell(values["389100"]));
+            // row.appendChild(createCell(values["354200"]));
+            // row.appendChild(createCell(values["383100"]));
+            // row.appendChild(createCell(values["389100"]));
+            // row.appendChild(createCell(values["391600"]));
+            // row.appendChild(createCell(values["402000"]));
+            // row.appendChild(createCell(values["410200"]));
+            // row.appendChild(createCell(values["B000655"]));
+            // tableBody.appendChild(row);
 
-            row.appendChild(createCell(values["391600"]));
-            row.appendChild(createCell(values["402000"]));
-            row.appendChild(createCell(values["410200"]));
-            row.appendChild(createCell(values["B000655"]));
-
+            ["354200", "383100", "389100", "391600", "402000", "410200", "B000655"].forEach(sector => {
+                row.appendChild(createCell(values[sector]));
+            });
             tableBody.appendChild(row);
         }
+        return periods; 
     }
+
+    function createServiceChart(periods) {
+        console.log(periods);
+        const ctx = document.getElementById('serviceChart').getContext('2d');
+
+        const periodLabels = Object.keys(periods).slice(0, 12);
+        const tradeData = periodLabels.map(period => periods[period]["354200"]);
+        const transportStorageData = periodLabels.map(period => periods[period]["383100"]);
+        const cateringData = periodLabels.map(period => periods[period]["389100"]);
+        const techCommunicationData = periodLabels.map(period => periods[period]["391600"]);
+        const realEstateData = periodLabels.map(period => periods[period]["402000"]);
+        const servicesData = periodLabels.map(period => periods[period]["410200"]);
+        const totalData = periodLabels.map(period => periods[period]["B000655"]);
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: periodLabels,
+                datasets: [
+                    { label: 'Trade', data: tradeData, borderColor: 'rgba(75, 192, 192, 1)', fill: false },
+                    { label: 'Transport & Storage', data: transportStorageData, borderColor: 'rgba(54, 162, 235, 1)', fill: false },
+                    { label: 'Catering', data: cateringData, borderColor: 'rgba(255, 99, 132, 1)', fill: false },
+                    { label: 'Tech & Communication', data: techCommunicationData, borderColor: 'rgba(153, 102, 255, 1)', fill: false },
+                    { label: 'Real Estate', data: realEstateData, borderColor: 'rgba(255, 159, 64, 1)', fill: false },
+                    { label: 'Services', data: servicesData, borderColor: 'rgba(255, 205, 86, 1)', fill: false },
+                    { label: 'Total', data: totalData, borderColor: 'rgba(100, 100, 100, 1)', fill: false },
+                ],
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: { title: { display: true, text: 'Period' } },
+                    y: { title: { display: true, text: 'Index Value' }, beginAtZero: true },
+                },
+            },
+        });
+    }
+
 
     // Helper function to create a table cell
     function createCell(value) {
@@ -473,27 +519,11 @@
         const tableInfosUrl = metaTable.value.find(entity => entity.name === 'TableInfos').url;
         try {
             const [typedDataResponse, tableInfosResponse] = await Promise.all([
-                    fetch(typedDataSetUrl, {
-                        method: 'GET',
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json'
-                        }
-                    }),
-                    fetch(tableInfosUrl, {
-                        method: 'GET',
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                ]);
-            if (!typedDataResponse.ok) {
-                throw new Error(`HTTP error fetching data! status: ${typedDataResponse.status}`);
-            }
-            if (!tableInfosResponse.ok) {
-                throw new Error(`HTTP error fetching TableInfos data! status: ${tableInfosResponse.status}`);
-            }
+                fetch(typedDataSetUrl, { method: 'GET', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' } }),
+                fetch(tableInfosUrl, { method: 'GET', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' } })
+            ]);
+            if (!typedDataResponse.ok || !tableInfosResponse.ok) throw new Error('HTTP error fetching data');
+            
             const typedData = await typedDataResponse.json();
             const tableInfosData = await tableInfosResponse.json();
 
@@ -508,7 +538,8 @@
                     item.Perioden = item.Perioden.replace(/MM/, '_');
                     return item;
                 });
-            Service_populateTable(filteredData, html_table, modifiedDate);
+            const periods = Service_populateTable(filteredData, html_table, modifiedDate);
+            createServiceChart(periods);
         } catch (error) {
             console.error('Error fetching TypedDataSet:', error);
         }
