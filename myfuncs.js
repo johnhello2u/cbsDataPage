@@ -124,6 +124,143 @@
     };
 
 
+//  -----------------------------------------------------------------------------------------------------------
+//  Consumer sentiment -------------------------------------------------------------------------------------------  
+//  -----------------------------------------------------------------------------------------------------------  
+    function getTypedDataSetUrl_ConSent(years, metadata) {
+        const yearFilters = years.map(year => `substringof('${year}', Perioden)`).join(' or ');
+        // const categoryFilter = `Bestedingscategorieen eq '${category}'`;
+        const filter = `${yearFilters}`;
+        const typedDataSetUrl = metadata.value.find(entity => entity.name === 'TypedDataSet').url + 
+            `?$filter=${filter}&$orderby=Perioden`; // Change ordering and top values as needed
+        return typedDataSetUrl;
+    }
+
+    function ConSent_populateTable(data, tableName, modifiedVariable) {
+        const tableBody = document.querySelector(`#${tableName} tbody`);
+        const lastModifiedElement = document.querySelector(`#con_sent_mod`);
+
+        tableBody.innerHTML = '';
+        if (lastModifiedElement) {
+            lastModifiedElement.textContent = `Last update: ${formatDate(modifiedVariable)}`;
+        }
+
+        data.forEach(item => {
+            const row = document.createElement("tr");
+            const periodCell = document.createElement("td");
+            periodCell.textContent = item.Perioden;
+            row.appendChild(periodCell);
+            const conConf = document.createElement("td");
+            conConf.textContent = item.Consumentenvertrouwen_1;
+            row.appendChild(conConf);
+            const ecoClimate = document.createElement("td");
+            ecoClimate.textContent = item.EconomischKlimaat_2;
+            row.appendChild(ecoClimate);
+            const purPrep = document.createElement("td");
+            purPrep.textContent = item.Koopbereidheid_3;
+            row.appendChild(purPrep);
+            tableBody.appendChild(row);
+        });
+    }
+
+    function createConSentChart(data) {
+        const labels = data.map(item => item.Perioden);
+        const consumentenvertrouwenData = data.map(item => parseFloat(item.Consumentenvertrouwen_1));
+        const economischKlimaatData = data.map(item => parseFloat(item.EconomischKlimaat_2));
+        const koopbereidheidData = data.map(item => parseFloat(item.Koopbereidheid_3));
+
+        const ctx = document.getElementById('cons_sent_Chart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {label: 'Consumer confidence',
+                        data: consumentenvertrouwenData,
+                        fill: false,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    },
+                    {label: 'Economic climate',
+                        data: economischKlimaatData,
+                        fill: false,
+                        borderColor: 'rgb(255, 99, 132)',
+                        tension: 0.1
+                    },
+                    {label: 'Purchase confidence',
+                        data: koopbereidheidData,
+                        fill: false,
+                        borderColor: 'rgb(54, 162, 235)',
+                        tension: 0.1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: true } },
+                scales: {
+                    x: {
+                        title: { display: false, text: 'Period' }, 
+                        ticks: { maxTicksLimit: 6, autoSkip: true }
+                    },
+                    y: { title: { display: true, text: 'Sentiment levels' } }
+                }
+            }
+        });
+    }
+
+    export async function ConSent_fetchTypedDataSet(years, html_table, metaTable) {
+        const typedDataSetUrl = getTypedDataSetUrl_ConSent(years, metaTable);
+        const tableInfosUrl = metaTable.value.find(entity => entity.name === 'TableInfos').url;
+
+        try {
+            const [typedDataResponse, tableInfosResponse] = await Promise.all([
+                fetch(typedDataSetUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                }),
+                fetch(tableInfosUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                })
+            ]);
+
+            if (!typedDataResponse.ok) {
+                throw new Error(`HTTP error fetching data! status: ${typedDataResponse.status}`);
+            }
+            if (!tableInfosResponse.ok) {
+                throw new Error(`HTTP error fetching TableInfos data! status: ${tableInfosResponse.status}`);
+            }
+
+            const typedData = await typedDataResponse.json();
+            const tableInfosData = await tableInfosResponse.json();
+
+            const modifiedDate = tableInfosData.value.length > 0 ? tableInfosData.value[0].Modified : 'Not Available';
+
+            const filteredData = typedData.value.filter(item => !item.Perioden.endsWith('00'))
+                .reverse()
+                .slice(0, 12)
+                .map(item => {
+                    item.Perioden = item.Perioden.replace(/MM/, '_');  
+                    return item;
+                });
+
+            ConSent_populateTable(filteredData, html_table, modifiedDate);
+            console.log(filteredData);
+            createConSentChart(filteredData.reverse());
+            
+        } catch (error) {
+            console.error('Error fetching TypedDataSet or TableInfos:', error);
+        }
+    };
+
+
 
 
 //  -----------------------------------------------------------------------------------------------------------
@@ -245,7 +382,144 @@
     }
 
 
+//  -----------------------------------------------------------------------------------------------------------
+//  producer sentiment -------------------------------------------------------------------------------------------  
+//  -----------------------------------------------------------------------------------------------------------  
+    function getTypedDataSetUrl_ProdSent(years, category, metadata) {
+        // Create a dynamic filter based on the years provided
+        const yearFilters = years.map(year => `substringof('${year}', Perioden)`).join(' or ');
+        const categoryFilter = `BedrijfstakkenBranchesSBI2008 eq '${category}'`;
+        const filter = `${yearFilters} and ${categoryFilter}`;
+        // Construct the final URL
+        const typedDataSetUrl = metadata.value.find(entity => entity.name === 'TypedDataSet').url + 
+            `?$filter=${filter}&$orderby=Perioden`; // Change ordering and top values as needed
+        return typedDataSetUrl;
+    }
 
+    function ProdSent_populateTable(data, tableName, modifiedVariable) {
+        const tableBody = document.querySelector(`#${tableName} tbody`);
+        const lastModifiedElement = document.querySelector(`#prod_sent_mod`);
+
+        tableBody.innerHTML = '';
+        if (lastModifiedElement) {
+            lastModifiedElement.textContent = `Last update: ${formatDate(modifiedVariable)}`;
+        }
+
+        // Loop through each item and create a row with the required columns
+        data.forEach(item => {
+            const row = document.createElement("tr");
+            // Create cells for each column
+            const periodCell = document.createElement("td");
+            periodCell.textContent = item.Perioden;
+            row.appendChild(periodCell);
+
+            const prodConf = document.createElement("td");
+            prodConf.textContent = item.Producentenvertrouwen_1;
+            row.appendChild(prodConf);
+
+            const busExpec = document.createElement("td");
+            busExpec.textContent = item.VerwachteBedrijvigheid_2;
+            row.appendChild(busExpec);
+
+            const ordeConf = document.createElement("td");
+            ordeConf.textContent = item.OordeelOrderpositie_3;
+            row.appendChild(ordeConf);
+            tableBody.appendChild(row);
+        });
+    }
+
+    function createProdSentChart(data) {
+        const labels = data.map(item => item.Perioden);
+        const producerVertrouwenData = data.map(item => parseFloat(item.Producentenvertrouwen_1));
+        const busExpec = data.map(item => parseFloat(item.VerwachteBedrijvigheid_2));
+        const orderConfi = data.map(item => parseFloat(item.OordeelOrderpositie_3));
+
+        const ctx = document.getElementById('prod_sent_Chart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {label: 'Producer confidence',
+                        data: producerVertrouwenData,
+                        fill: false,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1},
+                    {label: 'Business expectations',
+                        data: busExpec,
+                        fill: false,
+                        borderColor: 'rgb(255, 99, 132)',
+                        tension: 0.1},
+                    {label: 'Order positions',
+                        data: orderConfi,
+                        fill: false,
+                        borderColor: 'rgb(54, 162, 235)',
+                        tension: 0.1}
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: true } },
+                scales: {
+                    x: {
+                        title: { display: false, text: 'Period' }, 
+                        ticks: { maxTicksLimit: 6, autoSkip: true }
+                    },
+                    y: { title: { display: true, text: 'Sentiment levels' } }
+                }
+            }
+        });
+    }
+
+    export async function ProdSent_fetchTypedDataSet(years, category, html_table, metaTable) {
+        const typedDataSetUrl = getTypedDataSetUrl_ProdSent(years, category, metaTable);
+        const tableInfosUrl = metaTable.value.find(entity => entity.name === 'TableInfos').url;
+
+        try {
+            const [typedDataResponse, tableInfosResponse] = await Promise.all([
+                fetch(typedDataSetUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                }),
+                fetch(tableInfosUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                })
+            ]);
+
+            if (!typedDataResponse.ok) {
+                throw new Error(`HTTP error fetching data! status: ${typedDataResponse.status}`);
+            }
+            if (!tableInfosResponse.ok) {
+                throw new Error(`HTTP error fetching TableInfos data! status: ${tableInfosResponse.status}`);
+            }
+
+            const typedData = await typedDataResponse.json();
+            const tableInfosData = await tableInfosResponse.json();
+
+            const modifiedDate = tableInfosData.value.length > 0 ? tableInfosData.value[0].Modified : 'Not Available';
+
+            const filteredData = typedData.value.filter(item => !item.Perioden.endsWith('00'))
+                .reverse()
+                .slice(0, 12)
+                .map(item => {
+                    item.Perioden = item.Perioden.replace(/MM/, '_');  
+                    return item;
+                });
+
+            ProdSent_populateTable(filteredData, html_table, modifiedDate);
+            createProdSentChart(filteredData.reverse());
+            
+        } catch (error) {
+            console.error('Error fetching TypedDataSet or TableInfos:', error);
+        }
+    };
 
 
 //  -----------------------------------------------------------------------------------------------------------

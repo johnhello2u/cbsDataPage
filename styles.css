@@ -1,7 +1,8 @@
 .custom-gutter .col-lg-6,
 .custom-gutter .col-sm-12 {
-    padding-left: 2px;   /* Set to smaller value */
-    padding-right: 2px;  /* Set to smaller value */
+    padding-left: 4px;  
+    padding-right: 4px;  
+    padding-bottom: 4px;
 }
 
 /* General Body Styling */
@@ -10,13 +11,13 @@ body {
     line-height: 1.6;
     margin: 0px;
     padding: 0px;
-    background-color: #f4f8fb; /* Softer light background */
+    background-color: #f4f8fb; 
     color: #333;
 }
 
 /* Header Section Styling */
 header {
-    background-color: #003f5c; /* Deep blue background */
+    background-color: #003f5c; 
     color: white;
     padding: 30px 20px;
     /* border-radius: 8px; */
@@ -47,10 +48,10 @@ p {
 /* Heading Styling */
 h1 {
     text-align: center;
-    color: #2c3e50; /* Darker header color */
+    color: #2c3e50; 
     margin-bottom: 20px;
     font-size: 1.8em;
-    border-bottom: 2px solid #003f5c; /* Consistent deep blue border */
+    border-bottom: 2px solid #003f5c; 
     padding-bottom: 8px;
     font-weight: 500;
 }
@@ -59,11 +60,11 @@ h1 {
     font-size: 1.4em;
     font-weight: 600;
     margin-bottom: 10px;
-    color: #2c3e50; /* Darker color for titles */
+    color: #2c3e50; 
 }
 
 .card-body {
-    padding: 7px;  /* Adjust this value as needed */
+    padding: 9px;  
 }
 
 .card-text {
@@ -101,16 +102,16 @@ th {
 }
 
 tbody tr:nth-child(odd) {
-    background-color: #f8fafd; /* Very light blue for odd rows */
+    background-color: #f8fafd; /* odd rows */
 }
 
 tbody tr:nth-child(even) {
-    background-color: #edf7f9; /* Very light teal for even rows */
+    background-color: #edf7f9; /* even rows */
 }
 
 .table tbody tr:hover {
-    background-color: #96a5aa; /* Darker teal on hover */
-    color: #ffffff; /* White text on hover */
+    background-color: #96a5aa; 
+    color: #ffffff; 
     cursor: pointer;
 }
 
