@@ -3,29 +3,24 @@
 //  CPI -------------------------------------------------------------------------------------------  
 //  -----------------------------------------------------------------------------------------------------------  
     function getTypedDataSetUrl_CPI(years, category, metadata) {
-        // Create a dynamic filter based on the years provided
         const yearFilters = years.map(year => `substringof('${year}', Perioden)`).join(' or ');
         const categoryFilter = `Bestedingscategorieen eq '${category}'`;
         const filter = `${yearFilters} and ${categoryFilter}`;
-        // Construct the final URL
         const typedDataSetUrl = metadata.value.find(entity => entity.name === 'TypedDataSet').url + 
-            `?$filter=${filter}&$orderby=Perioden`; // Change ordering and top values as needed
+            `?$filter=${filter}&$orderby=Perioden`; 
         return typedDataSetUrl;
     }
 
     function CPI_populateTable(data, tableName, modifiedVariable) {
         const tableBody = document.querySelector(`#${tableName} tbody`);
         const lastModifiedElement = document.querySelector(`#cpi_mod`);
-
         tableBody.innerHTML = '';
         if (lastModifiedElement) {
             lastModifiedElement.textContent = `Last update: ${formatDate(modifiedVariable)}`;
         }
 
-        // Loop through each item and create a row with the required columns
         data.forEach(item => {
             const row = document.createElement("tr");
-            // Create cells for each column
             const periodCell = document.createElement("td");
             periodCell.textContent = item.Perioden;
             row.appendChild(periodCell);
@@ -45,26 +40,20 @@
     function createCPIChart(data) {
         const labels = data.map(item => item.Perioden);
         const yearMutationData = data.map(item => parseFloat(item.JaarmutatieCPI_5));
-    
         const ctx = document.getElementById('cpiChart').getContext('2d');
         new Chart(ctx, {
             type: 'line',
-            data: {
-                labels: labels,
+            data: {labels: labels,
                 datasets: [{
-                    label: 'Year Mutation (%)',
-                    data: yearMutationData,
-                    fill: false,
-                    borderColor: 'rgb(75, 192, 192)',
-                    tension: 0.1
+                    label: 'Year Mutation (%)',data: yearMutationData,fill: false,
+                    borderColor: 'rgb(75, 192, 192)',tension: 0.1,
+                    pointRadius: 1, pointHoverRadius: 5,
                 }]
             },
-            options: {
-                responsive: true,
+            options: {responsive: true,
                 plugins: {legend: { display: false }},
                 scales: {
-                    x: {
-                        title: {display: false, text: 'Period'}, 
+                    x: {title: {display: false, text: 'Period'}, 
                         ticks: { maxTicksLimit: 6, autoSkip: true, }  
                     },
                     y: {title: {display: true, text: 'Year Mutation in (%)'}}
@@ -77,30 +66,18 @@
         const typedDataSetUrl = getTypedDataSetUrl_CPI(years, category, metaTable);
         const tableInfosUrl = metaTable.value.find(entity => entity.name === 'TableInfos').url;
 
-        try {
-            const [typedDataResponse, tableInfosResponse] = await Promise.all([
-                fetch(typedDataSetUrl, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
-                }),
-                fetch(tableInfosUrl, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
-                })
+        try {const [typedDataResponse, tableInfosResponse] = await Promise.all([
+                fetch(typedDataSetUrl, { method: 'GET', headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}}),
+                fetch(tableInfosUrl, {method: 'GET', headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}})
             ]);
 
-            if (!typedDataResponse.ok) {
-                throw new Error(`HTTP error fetching data! status: ${typedDataResponse.status}`);
-            }
-            if (!tableInfosResponse.ok) {
-                throw new Error(`HTTP error fetching TableInfos data! status: ${tableInfosResponse.status}`);
-            }
+            // if (!typedDataResponse.ok) {
+            //     throw new Error(`HTTP error fetching data! status: ${typedDataResponse.status}`);
+            // }
+            // if (!tableInfosResponse.ok) {
+            //     throw new Error(`HTTP error fetching TableInfos data! status: ${tableInfosResponse.status}`);
+            // }
+            if (!typedDataResponse.ok || !tableInfosResponse.ok) throw new Error('HTTP error fetching data');
 
             const typedData = await typedDataResponse.json();
             const tableInfosData = await tableInfosResponse.json();
@@ -129,10 +106,9 @@
 //  -----------------------------------------------------------------------------------------------------------  
     function getTypedDataSetUrl_ConSent(years, metadata) {
         const yearFilters = years.map(year => `substringof('${year}', Perioden)`).join(' or ');
-        // const categoryFilter = `Bestedingscategorieen eq '${category}'`;
         const filter = `${yearFilters}`;
         const typedDataSetUrl = metadata.value.find(entity => entity.name === 'TypedDataSet').url + 
-            `?$filter=${filter}&$orderby=Perioden`; // Change ordering and top values as needed
+            `?$filter=${filter}&$orderby=Perioden`;
         return typedDataSetUrl;
     }
 
@@ -175,23 +151,14 @@
             data: {
                 labels: labels,
                 datasets: [
-                    {label: 'Consumer confidence',
-                        data: consumentenvertrouwenData,
-                        fill: false,
-                        borderColor: 'rgb(75, 192, 192)',
-                        tension: 0.1
+                    {label: 'Consumer confidence', data: consumentenvertrouwenData,
+                        fill: false, borderColor: 'rgb(75, 192, 192)', tension: 0.1, pointRadius: 1, pointHoverRadius: 5,
                     },
-                    {label: 'Economic climate',
-                        data: economischKlimaatData,
-                        fill: false,
-                        borderColor: 'rgb(255, 99, 132)',
-                        tension: 0.1
+                    {label: 'Economic climate', data: economischKlimaatData,
+                        fill: false, borderColor: 'rgb(255, 99, 132)', tension: 0.1, pointRadius: 1, pointHoverRadius: 5,
                     },
-                    {label: 'Purchase confidence',
-                        data: koopbereidheidData,
-                        fill: false,
-                        borderColor: 'rgb(54, 162, 235)',
-                        tension: 0.1
+                    {label: 'Purchase confidence', data: koopbereidheidData,
+                        fill: false, borderColor: 'rgb(54, 162, 235)', tension: 0.1, pointRadius: 1, pointHoverRadius: 5,
                     }
                 ]
             },
@@ -199,8 +166,7 @@
                 responsive: true,
                 plugins: { legend: { display: true } },
                 scales: {
-                    x: {
-                        title: { display: false, text: 'Period' }, 
+                    x: {title: { display: false, text: 'Period' }, 
                         ticks: { maxTicksLimit: 6, autoSkip: true }
                     },
                     y: { title: { display: true, text: 'Sentiment levels' } }
@@ -213,30 +179,12 @@
         const typedDataSetUrl = getTypedDataSetUrl_ConSent(years, metaTable);
         const tableInfosUrl = metaTable.value.find(entity => entity.name === 'TableInfos').url;
 
-        try {
-            const [typedDataResponse, tableInfosResponse] = await Promise.all([
-                fetch(typedDataSetUrl, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
-                }),
-                fetch(tableInfosUrl, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
-                })
+        try {const [typedDataResponse, tableInfosResponse] = await Promise.all([
+                fetch(typedDataSetUrl, { method: 'GET', headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}}),
+                fetch(tableInfosUrl, {method: 'GET', headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}})
             ]);
 
-            if (!typedDataResponse.ok) {
-                throw new Error(`HTTP error fetching data! status: ${typedDataResponse.status}`);
-            }
-            if (!tableInfosResponse.ok) {
-                throw new Error(`HTTP error fetching TableInfos data! status: ${tableInfosResponse.status}`);
-            }
+            if (!typedDataResponse.ok || !tableInfosResponse.ok) throw new Error('HTTP error fetching data');
 
             const typedData = await typedDataResponse.json();
             const tableInfosData = await tableInfosResponse.json();
@@ -246,8 +194,7 @@
             const filteredData = typedData.value.filter(item => !item.Perioden.endsWith('00'))
                 .reverse()
                 .slice(0, 12)
-                .map(item => {
-                    item.Perioden = item.Perioden.replace(/MM/, '_');  
+                .map(item => {item.Perioden = item.Perioden.replace(/MM/, '_');  
                     return item;
                 });
 
@@ -267,7 +214,6 @@
 //  PPI -------------------------------------------------------------------------------------------  
 //  -----------------------------------------------------------------------------------------------------------  
     function getTypedDataSetUrl_PPI(years, AlleBedrijfstakken, Afzet, metadata) {
-        // Create a dynamic filter based on the years provided
         const yearFilters = years.map(year => `substringof('${year}', Perioden)`).join(' or ');
         const btak = `AlleBedrijfstakken eq '${AlleBedrijfstakken.join(",")}'`;
         const afzetFilter = `Afzet eq '${Afzet.join(",")}'`; 
@@ -284,6 +230,7 @@
         if (lastModifiedElement) {
             lastModifiedElement.textContent = `Last update: ${formatDate(modifiedVariable)}`;
         }
+
         data.forEach(item => {
             const row = document.createElement("tr");
             const periodCell = document.createElement("td");
@@ -312,19 +259,15 @@
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Year Mutation (%)',
-                    data: yearMutationData,
-                    fill: false,
-                    borderColor: 'rgb(75, 192, 192)',
-                    tension: 0.1
+                    label: 'Year Mutation (%)', data: yearMutationData,
+                    fill: false, borderColor: 'rgb(75, 192, 192)', tension: 0.1, pointRadius: 1, pointHoverRadius: 5,
                 }]
             },
             options: {
                 responsive: true,
                 plugins: {legend: { display: false }},
                 scales: {
-                    x: {
-                        title: {display: false, text: 'Period'}, 
+                    x: {title: {display: false, text: 'Period'}, 
                         ticks: { maxTicksLimit: 6, autoSkip: true, }  
                     },
                     y: {title: {display: true, text: 'Year Mutation (%)'}}
@@ -337,41 +280,23 @@
     export async function PPI_fetchTypedDataSet(years, AlleBedrijfstakken, Afzet, html_table, metaTable) {
         const typedDataSetUrl = getTypedDataSetUrl_PPI(years, AlleBedrijfstakken, Afzet, metaTable);
         const tableInfosUrl = metaTable.value.find(entity => entity.name === 'TableInfos').url;
-        try {
-            const [typedDataResponse, tableInfosResponse] = await Promise.all([
-                fetch(typedDataSetUrl, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
-                }),
-                fetch(tableInfosUrl, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
-                })
+
+        try {const [typedDataResponse, tableInfosResponse] = await Promise.all([
+                fetch(typedDataSetUrl, { method: 'GET', headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}}),
+                fetch(tableInfosUrl, {method: 'GET', headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}})
             ]);
-            if (!typedDataResponse.ok) {
-                throw new Error(`HTTP error fetching data! status: ${typedDataResponse.status}`);
-            }
-            if (!tableInfosResponse.ok) {
-                throw new Error(`HTTP error fetching TableInfos data! status: ${tableInfosResponse.status}`);
-            }
+
+            if (!typedDataResponse.ok || !tableInfosResponse.ok) throw new Error('HTTP error fetching data');
+
             const typedData = await typedDataResponse.json();
             const tableInfosData = await tableInfosResponse.json();
 
             const modifiedDate = tableInfosData.value.length > 0 ? tableInfosData.value[0].Modified : 'Not Available';
 
             const filteredData = typedData.value.filter(item => !item.Perioden.endsWith('00')).reverse().slice(0, 12)
-            .map(item => {
-                // Modify the Perioden format by replacing MM with a hyphen
-                item.Perioden = item.Perioden.replace(/MM/, '_');
+            .map(item => {item.Perioden = item.Perioden.replace(/MM/, '_');
                 return item;
             });  
-
 
             PPI_populateTable(filteredData, html_table, modifiedDate);
             createPpiChart(filteredData.reverse());
@@ -386,13 +311,11 @@
 //  producer sentiment -------------------------------------------------------------------------------------------  
 //  -----------------------------------------------------------------------------------------------------------  
     function getTypedDataSetUrl_ProdSent(years, category, metadata) {
-        // Create a dynamic filter based on the years provided
         const yearFilters = years.map(year => `substringof('${year}', Perioden)`).join(' or ');
         const categoryFilter = `BedrijfstakkenBranchesSBI2008 eq '${category}'`;
         const filter = `${yearFilters} and ${categoryFilter}`;
-        // Construct the final URL
         const typedDataSetUrl = metadata.value.find(entity => entity.name === 'TypedDataSet').url + 
-            `?$filter=${filter}&$orderby=Perioden`; // Change ordering and top values as needed
+            `?$filter=${filter}&$orderby=Perioden`; 
         return typedDataSetUrl;
     }
 
@@ -405,22 +328,17 @@
             lastModifiedElement.textContent = `Last update: ${formatDate(modifiedVariable)}`;
         }
 
-        // Loop through each item and create a row with the required columns
         data.forEach(item => {
             const row = document.createElement("tr");
-            // Create cells for each column
             const periodCell = document.createElement("td");
             periodCell.textContent = item.Perioden;
             row.appendChild(periodCell);
-
             const prodConf = document.createElement("td");
             prodConf.textContent = item.Producentenvertrouwen_1;
             row.appendChild(prodConf);
-
             const busExpec = document.createElement("td");
             busExpec.textContent = item.VerwachteBedrijvigheid_2;
             row.appendChild(busExpec);
-
             const ordeConf = document.createElement("td");
             ordeConf.textContent = item.OordeelOrderpositie_3;
             row.appendChild(ordeConf);
@@ -440,29 +358,19 @@
             data: {
                 labels: labels,
                 datasets: [
-                    {label: 'Producer confidence',
-                        data: producerVertrouwenData,
-                        fill: false,
-                        borderColor: 'rgb(75, 192, 192)',
-                        tension: 0.1},
-                    {label: 'Business expectations',
-                        data: busExpec,
-                        fill: false,
-                        borderColor: 'rgb(255, 99, 132)',
-                        tension: 0.1},
-                    {label: 'Order positions',
-                        data: orderConfi,
-                        fill: false,
-                        borderColor: 'rgb(54, 162, 235)',
-                        tension: 0.1}
+                    {label: 'Producer confidence', data: producerVertrouwenData,
+                        fill: false, borderColor: 'rgb(75, 192, 192)', tension: 0.1, pointRadius: 1, pointHoverRadius: 5,},
+                    {label: 'Business expectations', data: busExpec,
+                        fill: false, borderColor: 'rgb(255, 99, 132)', tension: 0.1, pointRadius: 1, pointHoverRadius: 5,},
+                    {label: 'Order positions', data: orderConfi,
+                        fill: false, borderColor: 'rgb(54, 162, 235)', tension: 0.1, pointRadius: 1, pointHoverRadius: 5,}
                 ]
             },
             options: {
                 responsive: true,
                 plugins: { legend: { display: true } },
                 scales: {
-                    x: {
-                        title: { display: false, text: 'Period' }, 
+                    x: {title: { display: false, text: 'Period' }, 
                         ticks: { maxTicksLimit: 6, autoSkip: true }
                     },
                     y: { title: { display: true, text: 'Sentiment levels' } }
@@ -475,30 +383,12 @@
         const typedDataSetUrl = getTypedDataSetUrl_ProdSent(years, category, metaTable);
         const tableInfosUrl = metaTable.value.find(entity => entity.name === 'TableInfos').url;
 
-        try {
-            const [typedDataResponse, tableInfosResponse] = await Promise.all([
-                fetch(typedDataSetUrl, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
-                }),
-                fetch(tableInfosUrl, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
-                })
+        try {const [typedDataResponse, tableInfosResponse] = await Promise.all([
+                fetch(typedDataSetUrl, { method: 'GET', headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}}),
+                fetch(tableInfosUrl, {method: 'GET', headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}})
             ]);
 
-            if (!typedDataResponse.ok) {
-                throw new Error(`HTTP error fetching data! status: ${typedDataResponse.status}`);
-            }
-            if (!tableInfosResponse.ok) {
-                throw new Error(`HTTP error fetching TableInfos data! status: ${tableInfosResponse.status}`);
-            }
+            if (!typedDataResponse.ok || !tableInfosResponse.ok) throw new Error('HTTP error fetching data');
 
             const typedData = await typedDataResponse.json();
             const tableInfosData = await tableInfosResponse.json();
@@ -508,8 +398,7 @@
             const filteredData = typedData.value.filter(item => !item.Perioden.endsWith('00'))
                 .reverse()
                 .slice(0, 12)
-                .map(item => {
-                    item.Perioden = item.Perioden.replace(/MM/, '_');  
+                .map(item => {item.Perioden = item.Perioden.replace(/MM/, '_');  
                     return item;
                 });
 
@@ -538,23 +427,16 @@
         const tableBody = document.querySelector(`#${tableName} tbody`);
         const lastModifiedElement = document.querySelector(`#services_mod`);
         tableBody.innerHTML = '';
-
         if (lastModifiedElement) {
             lastModifiedElement.textContent = `Last update: ${formatDate(modifiedVariable)}`;
         }
         const periods = {}; 
 
-        // Initialize the structure for each period
         data.forEach(item => {
             if (!periods[item.Perioden]) {
                 periods[item.Perioden] = {
-                    "354200": null,
-                    "383100": null,
-                    "389100": null,
-                    "391600": null,
-                    "402000": null,
-                    "B000655": null,
-                    "410200": null
+                    "354200": null,"383100": null,"389100": null,
+                    "391600": null,"402000": null,"B000655": null,"410200": null
                 };
             }
 
@@ -585,16 +467,14 @@
             // }
         });
 
-        // Convert periods object to an array and get the last 12 entries
         const last12Entries = Object.entries(periods).slice(0,12);
 
         // Populate the table rows
         for (const [period, values] of last12Entries) {
             const row = document.createElement("tr");
             const periodCell = document.createElement("td");
-            periodCell.textContent = period; // Add period
+            periodCell.textContent = period;
             row.appendChild(periodCell);
-
             // Add cells for each sector
             // row.appendChild(createCell(values["354200"]));
             // row.appendChild(createCell(values["383100"]));
@@ -627,16 +507,15 @@
 
         new Chart(ctx, {
             type: 'line',
-            data: {
-                labels: periodLabels,
+            data: {labels: periodLabels,
                 datasets: [
-                    { label: 'Trade', data: tradeData, borderColor: 'rgba(75, 192, 192, 1)', fill: false },
-                    { label: 'Transport & Storage', data: transportStorageData, borderColor: 'rgba(54, 162, 235, 1)', fill: false },
-                    { label: 'Catering', data: cateringData, borderColor: 'rgba(255, 99, 132, 1)', fill: false },
-                    { label: 'Tech & Commun', data: techCommunicationData, borderColor: 'rgba(153, 102, 255, 1)', fill: false },
-                    { label: 'Real Estate', data: realEstateData, borderColor: 'rgba(255, 159, 64, 1)', fill: false },
-                    { label: 'Services', data: servicesData, borderColor: 'rgba(255, 205, 86, 1)', fill: false },
-                    // { label: 'Total', data: totalData, borderColor: 'rgba(100, 100, 100, 1)', fill: false },
+                    { label: 'Trade', data: tradeData, borderColor: 'rgba(75, 192, 192, 1)', fill: false, pointRadius: 1, pointHoverRadius: 5, },
+                    { label: 'Transport & Storage', data: transportStorageData, borderColor: 'rgba(54, 162, 235, 1)', fill: false, pointRadius: 1, pointHoverRadius: 5, },
+                    { label: 'Catering', data: cateringData, borderColor: 'rgba(255, 99, 132, 1)', fill: false, pointRadius: 1, pointHoverRadius: 5, },
+                    { label: 'Tech & Commun', data: techCommunicationData, borderColor: 'rgba(153, 102, 255, 1)', fill: false, pointRadius: 1, pointHoverRadius: 5, },
+                    { label: 'Real Estate', data: realEstateData, borderColor: 'rgba(255, 159, 64, 1)', fill: false, pointRadius: 1, pointHoverRadius: 5, },
+                    { label: 'Services', data: servicesData, borderColor: 'rgba(255, 205, 86, 1)', fill: false, pointRadius: 1, pointHoverRadius: 5, },
+                    // { label: 'Total', data: totalData, borderColor: 'rgba(100, 100, 100, 1)', fill: false, pointRadius: 1, pointHoverRadius: 5, },
                 ],
             },
             options: {
@@ -660,8 +539,7 @@
     export async function Service_fetchTypedDataSet(years, AlleBedrijfstakken, html_table, metaTable) {
         const typedDataSetUrl = getTypedDataSetUrl_Service(years, AlleBedrijfstakken, metaTable);
         const tableInfosUrl = metaTable.value.find(entity => entity.name === 'TableInfos').url;
-        try {
-            const [typedDataResponse, tableInfosResponse] = await Promise.all([
+        try {const [typedDataResponse, tableInfosResponse] = await Promise.all([
                 fetch(typedDataSetUrl, { method: 'GET', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' } }),
                 fetch(tableInfosUrl, { method: 'GET', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' } })
             ]);
@@ -676,9 +554,7 @@
                     !item.Perioden.endsWith('00') &&
                     !(item.Perioden.charAt(4) === 'K'))
                 .reverse()
-                .map(item => {
-                    // Modify the Perioden format by replacing MM with a hyphen
-                    item.Perioden = item.Perioden.replace(/MM/, '_');
+                .map(item => {item.Perioden = item.Perioden.replace(/MM/, '_');
                     return item;
                 });
             const periods = Service_populateTable(filteredData, html_table, modifiedDate);
@@ -693,23 +569,17 @@
 //  Housing -------------------------------------------------------------------------------------------  
 //  -----------------------------------------------------------------------------------------------------------  
     function getTypedDataSetUrl_Housing(years, category, metadata) {
-        // Create a dynamic filter based on the years provided
         const yearFilters = years.map(year => `substringof('${year}', Perioden)`).join(' or ');
-        // const categoryFilter = `Bestedingscategorieen eq '${category}'`;
-        // const filter = `${yearFilters} and ${categoryFilter}`;
         const filter = `${yearFilters}`;
-        // Construct the final URL
         const typedDataSetUrl = metadata.value.find(entity => entity.name === 'TypedDataSet').url + 
-            `?$filter=${filter}&$orderby=Perioden`; // Change ordering and top values as needed
+            `?$filter=${filter}&$orderby=Perioden`; 
         return typedDataSetUrl;
     }
 
     function Housing_populateTable(data, tableName, modifiedVariable) {
         const tableBody = document.querySelector(`#${tableName} tbody`);
         const lastModifiedElement = document.querySelector(`#housing_mod`);
-        // Clear the existing table rows
         tableBody.innerHTML = '';
-        
         if (lastModifiedElement) {
             lastModifiedElement.textContent = `Last update: ${formatDate(modifiedVariable)}`;
         }
@@ -717,7 +587,7 @@
 
         data.forEach(item => {
             const row = document.createElement("tr");
-            // Create cells for each column
+
             const periodCell = document.createElement("td");
             periodCell.textContent = item.Perioden;
             row.appendChild(periodCell);
@@ -736,7 +606,7 @@
             const objects_jaarmutatieCell = document.createElement("td");
             objects_jaarmutatieCell.textContent = item.OntwikkelingTOVEenJaarEerder_6;
             row.appendChild(objects_jaarmutatieCell);
-            // Append the row to the table body
+
             tableBody.appendChild(row);
         });
     }
@@ -750,20 +620,15 @@
             type: 'line',
             data: {
                 labels: labels,
-                datasets: [{
-                    label: 'Year Mutation (%)',
-                    data: yearMutationData,
-                    fill: false,
-                    borderColor: 'rgb(75, 192, 192)',
-                    tension: 0.1
+                datasets: [{label: 'Year Mutation (%)', data: yearMutationData, fill: false,
+                    borderColor: 'rgb(75, 192, 192)', tension: 0.1, pointRadius: 1, pointHoverRadius: 5,
                 }]
             },
             options: {
                 responsive: true,
                 plugins: {legend: { display: false }},
                 scales: {
-                    x: {
-                        title: {display: false, text: 'Period'}, 
+                    x: {title: {display: false, text: 'Period'}, 
                         ticks: {maxTicksLimit: 6, autoSkip: true, }  
                     },
                     y: {title: {display: true, text: 'Year Mutation in (%)'}}
@@ -775,44 +640,26 @@
     export async function Housing_fetchTypedDataSet(years, category, html_table, metaTable) {
         const typedDataSetUrl = getTypedDataSetUrl_Housing(years, category, metaTable);
         const tableInfosUrl = metaTable.value.find(entity => entity.name === 'TableInfos').url;
-        try {
-            const [typedDataResponse, tableInfosResponse] = await Promise.all([
-                fetch(typedDataSetUrl, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
-                }),
-                fetch(tableInfosUrl, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
-                })
+        try {const [typedDataResponse, tableInfosResponse] = await Promise.all([
+                fetch(typedDataSetUrl, { method: 'GET', headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}}),
+                fetch(tableInfosUrl, {method: 'GET', headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}})
             ]);
-            if (!typedDataResponse.ok) {
-                throw new Error(`HTTP error fetching data! status: ${typedDataResponse.status}`);
-            }
-            if (!tableInfosResponse.ok) {
-                throw new Error(`HTTP error fetching TableInfos data! status: ${tableInfosResponse.status}`);
-            }
+
+            if (!typedDataResponse.ok || !tableInfosResponse.ok) throw new Error('HTTP error fetching data');
+
             const typedData = await typedDataResponse.json();
             const tableInfosData = await tableInfosResponse.json();
 
             const modifiedDate = tableInfosData.value.length > 0 ? tableInfosData.value[0].Modified : 'Not Available';
 
             const filteredData = typedData.value
-            .filter(item => 
-                !item.Perioden.endsWith('00') &&
-                !(item.Perioden.charAt(4) === 'K'))
-            .reverse()
-            .slice(0,12)
-            .map(item => {
-                // Modify the Perioden format by replacing MM with a hyphen
-                item.Perioden = item.Perioden.replace(/MM/, '_');
-                return item;
+                .filter(item => 
+                    !item.Perioden.endsWith('00') &&
+                    !(item.Perioden.charAt(4) === 'K'))
+                .reverse()
+                .slice(0,12)
+                .map(item => {item.Perioden = item.Perioden.replace(/MM/, '_');
+                    return item;
             });
 
             Housing_populateTable(filteredData, html_table, modifiedDate);
@@ -821,4 +668,223 @@
         } catch (error) {
             console.error('Error fetching TypedDataSet:', error);
             }
+    }
+
+
+//  -----------------------------------------------------------------------------------------------------------
+//  Employment by brances-------------------------------------------------------------------------------------------  
+//  -----------------------------------------------------------------------------------------------------------  
+    function getTypedDataSetUrl_Employment(years, AlleBedrijfstakken, kenmerkenbaan, metadata) {
+        const yearFilters = years.map(year => `substringof('${year}', Perioden)`).join(' or ');
+        const btak = `BedrijfstakkenBranchesSBI2008 eq '${AlleBedrijfstakken.join("' or BedrijfstakkenBranchesSBI2008 eq '")}'`;
+        const kenmerkenFilter = `KenmerkenBaan eq '${kenmerkenbaan}'`;
+        const filter = `${yearFilters} and ${btak} and ${kenmerkenFilter}`;
+        const typedDataSetUrl = metadata.value.find(entity => entity.name === 'TypedDataSet').url + 
+            `?$filter=${filter}&$orderby=Perioden`; 
+        return typedDataSetUrl;
+    }
+
+    function Employment_populateTable(data, tableName, modifiedVariable) {
+        const tableBody = document.querySelector(`#${tableName} tbody`);
+        const lastModifiedElement = document.querySelector(`#Employ_mod`);
+        tableBody.innerHTML = '';
+        if (lastModifiedElement) {
+            lastModifiedElement.textContent = `Last update: ${formatDate(modifiedVariable)}`;
+        }
+        const periods = {}; 
+
+        data.forEach(item => {
+            if (!periods[item.Perioden]) {
+                periods[item.Perioden] = {
+                    "T001081": null,"301000": null,"300002": null,"350000": null,"354200": null,"383100": null,"389100": null,
+                    "391600": null,"396300": null,"402000": null,"300010": null,"300012": null,"300014": null
+                };
+            }
+
+            const sector = item.BedrijfstakkenBranchesSBI2008.trim();
+            periods[item.Perioden][sector] = item.BanenMetSeizoenscorrectie_1;
+            
+        });
+
+        const last12Entries = Object.entries(periods).slice(0,12);
+
+        // Populate the table rows
+        for (const [period, values] of last12Entries) {
+            const row = document.createElement("tr");
+            const periodCell = document.createElement("td");
+            periodCell.textContent = period;
+            row.appendChild(periodCell);
+
+            ["T001081","301000","300002","350000","354200","383100","389100","391600","396300","402000", "300010", "300012","300014"].forEach(sector => {
+                row.appendChild(createCell(values[sector]));
+            });
+            tableBody.appendChild(row);
+        }
+        return periods; 
+    }
+
+    function createEmploymentChart(periods) {
+        const ctx = document.getElementById('EmployChart').getContext('2d');
+
+        const periodLabels = Object.keys(periods).slice(0, 12).reverse();
+        // const tradeData = periodLabels.map(period => periods[period]["354200"]);
+        // const transportStorageData = periodLabels.map(period => periods[period]["383100"]);
+        // const cateringData = periodLabels.map(period => periods[period]["389100"]);
+        // const techCommunicationData = periodLabels.map(period => periods[period]["391600"]);
+        // const realEstateData = periodLabels.map(period => periods[period]["402000"]);
+        // const servicesData = periodLabels.map(period => periods[period]["410200"]);
+        const totalData = periodLabels.map(period => periods[period]["T001081"]);
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {labels: periodLabels,
+                datasets: [
+                    // { label: 'Trade', data: tradeData, borderColor: 'rgba(75, 192, 192, 1)', fill: false },
+                    // { label: 'Transport & Storage', data: transportStorageData, borderColor: 'rgba(54, 162, 235, 1)', fill: false },
+                    // { label: 'Catering', data: cateringData, borderColor: 'rgba(255, 99, 132, 1)', fill: false },
+                    // { label: 'Tech & Commun', data: techCommunicationData, borderColor: 'rgba(153, 102, 255, 1)', fill: false },
+                    // { label: 'Real Estate', data: realEstateData, borderColor: 'rgba(255, 159, 64, 1)', fill: false },
+                    // { label: 'Services', data: servicesData, borderColor: 'rgba(255, 205, 86, 1)', fill: false },
+                    { label: 'Total', data: totalData, borderColor: 'rgba(75, 192, 192)', fill: false, pointRadius: 1, pointHoverRadius: 5, },
+                ],
+            },
+            options: {
+                responsive: true, plugins: {legend: { display: false }},
+                scales: {x: { title: { display: false, text: 'Period' }, ticks: { maxTicksLimit: 6, autoSkip: true, }  },
+                    y: { title: { display: true, text: 'Total employment (x1000)' }, beginAtZero: true },
+                },
+            },
+        });
+    }
+
+
+    export async function Employment_fetchTypedDataSet(years, AlleBedrijfstakken, kenmerkenbaan, html_table, metaTable) {
+        const typedDataSetUrl = getTypedDataSetUrl_Employment(years, AlleBedrijfstakken, kenmerkenbaan, metaTable);
+        const tableInfosUrl = metaTable.value.find(entity => entity.name === 'TableInfos').url;
+        try {const [typedDataResponse, tableInfosResponse] = await Promise.all([
+                fetch(typedDataSetUrl, { method: 'GET', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' } }),
+                fetch(tableInfosUrl, { method: 'GET', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' } })
+            ]);
+            if (!typedDataResponse.ok || !tableInfosResponse.ok) throw new Error('HTTP error fetching data');
+            
+            const typedData = await typedDataResponse.json();
+            const tableInfosData = await tableInfosResponse.json();
+
+            const modifiedDate = tableInfosData.value.length > 0 ? tableInfosData.value[0].Modified : 'Not Available';
+            const filteredData = typedData.value
+                .filter(item => 
+                    !item.Perioden.endsWith('00') &&
+                    !(item.Perioden.charAt(4) === 'K'))
+                .reverse()
+                .map(item => {item.Perioden = item.Perioden.replace(/MM/, '_');
+                    return item;
+                });
+            const periods = Employment_populateTable(filteredData, html_table, modifiedDate);
+            createEmploymentChart(periods);
+        } catch (error) {
+            console.error('Error fetching TypedDataSet:', error);
+        }
+    }
+
+//  -----------------------------------------------------------------------------------------------------------
+//  Salary by brances-------------------------------------------------------------------------------------------  
+//  -----------------------------------------------------------------------------------------------------------  
+    function getTypedDataSetUrl_Salary(years, AlleBedrijfstakken, kenmerkenbaan, metadata) {
+        const yearFilters = years.map(year => `substringof('${year}', Perioden)`).join(' or ');
+        const btak = `BedrijfstakkenBranchesSBI2008 eq '${AlleBedrijfstakken.join("' or BedrijfstakkenBranchesSBI2008 eq '")}'`;
+        const kenmerkenFilter = `KenmerkenBaan eq '${kenmerkenbaan}'`;
+        const filter = `${yearFilters} and ${btak} and ${kenmerkenFilter}`;
+        const typedDataSetUrl = metadata.value.find(entity => entity.name === 'TypedDataSet').url + 
+            `?$filter=${filter}&$orderby=Perioden`; 
+        return typedDataSetUrl;
+    }
+
+    function Salary_populateTable(data, tableName, modifiedVariable) {
+        const tableBody = document.querySelector(`#${tableName} tbody`);
+        const lastModifiedElement = document.querySelector(`#Salary_mod`);
+        tableBody.innerHTML = '';
+        if (lastModifiedElement) {
+            lastModifiedElement.textContent = `Last update: ${formatDate(modifiedVariable)}`;
+        }
+        const periods = {}; 
+
+        data.forEach(item => {
+            if (!periods[item.Perioden]) {
+                periods[item.Perioden] = {
+                    "T001081": null,"301000": null,"300002": null,"350000": null,"354200": null,"383100": null,"389100": null,
+                    "391600": null,"396300": null,"402000": null,"300010": null,"300012": null,"300014": null
+                };
+            }
+
+            const sector = item.BedrijfstakkenBranchesSBI2008.trim();
+            periods[item.Perioden][sector] = item.MaandloonInclusiefOverwerk_5;
+            
+        });
+
+        const last12Entries = Object.entries(periods).slice(0,12);
+
+        // Populate the table rows
+        for (const [period, values] of last12Entries) {
+            const row = document.createElement("tr");
+            const periodCell = document.createElement("td");
+            periodCell.textContent = period;
+            row.appendChild(periodCell);
+
+            ["T001081","301000","300002","350000","354200","383100","389100","391600","396300","402000", "300010", "300012","300014"].forEach(sector => {
+                row.appendChild(createCell(values[sector]));
+            });
+            tableBody.appendChild(row);
+        }
+        return periods; 
+    }
+
+    function createSalaryChart(periods) {
+        const ctx = document.getElementById('SalaryChart').getContext('2d');
+
+        const periodLabels = Object.keys(periods).slice(0, 12).reverse();
+        const totalData = periodLabels.map(period => periods[period]["T001081"]);
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {labels: periodLabels,
+                datasets: [
+                    { label: 'Total', data: totalData, borderColor: 'rgba(75, 192, 192)', fill: false, pointRadius: 1, pointHoverRadius: 5, },
+                ],
+            },
+            options: {
+                responsive: true, plugins: {legend: { display: false }},
+                scales: {x: { title: { display: false, text: 'Period' }, ticks: { maxTicksLimit: 6, autoSkip: true, }  },
+                    y: { title: { display: true, text: 'Average Gross salary (€)' }, beginAtZero: true },
+                },
+            },
+        });
+    }
+
+
+    export async function Salary_fetchTypedDataSet(years, AlleBedrijfstakken, kenmerkenbaan, html_table, metaTable) {
+        const typedDataSetUrl = getTypedDataSetUrl_Salary(years, AlleBedrijfstakken, kenmerkenbaan, metaTable);
+        const tableInfosUrl = metaTable.value.find(entity => entity.name === 'TableInfos').url;
+        try {const [typedDataResponse, tableInfosResponse] = await Promise.all([
+                fetch(typedDataSetUrl, { method: 'GET', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' } }),
+                fetch(tableInfosUrl, { method: 'GET', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' } })
+            ]);
+            if (!typedDataResponse.ok || !tableInfosResponse.ok) throw new Error('HTTP error fetching data');
+            
+            const typedData = await typedDataResponse.json();
+            const tableInfosData = await tableInfosResponse.json();
+
+            const modifiedDate = tableInfosData.value.length > 0 ? tableInfosData.value[0].Modified : 'Not Available';
+            const filteredData = typedData.value
+                .filter(item => 
+                    !item.Perioden.endsWith('00') &&
+                    !(item.Perioden.charAt(4) === 'K'))
+                .reverse()
+                .map(item => {item.Perioden = item.Perioden.replace(/MM/, '_');
+                    return item;
+                });
+            const periods = Salary_populateTable(filteredData, html_table, modifiedDate);
+            createSalaryChart(periods);
+        } catch (error) {
+            console.error('Error fetching TypedDataSet:', error);
+        }
     }
