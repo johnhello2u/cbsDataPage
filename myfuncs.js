@@ -854,7 +854,7 @@
             options: {
                 responsive: true, plugins: {legend: { display: false }},
                 scales: {x: { title: { display: false, text: 'Period' }, ticks: { maxTicksLimit: 6, autoSkip: true, }  },
-                    y: { title: { display: true, text: 'Average Gross salary (€)' }, beginAtZero: true },
+                    y: { title: { display: true, text: 'Total avg Gross salary (€)' }, beginAtZero: true },
                 },
             },
         });
