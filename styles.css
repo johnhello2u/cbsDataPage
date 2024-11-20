@@ -142,3 +142,112 @@ footer p {
     padding: 0 20px; /* Align footer <p> as well */
 }
 
+
+/* Oyiko styling */
+/* General styling */
+
+    /* Animated Header */
+    .animated-header {
+        background: linear-gradient(120deg, #8136d1, #3c7ae6);
+        color: white;
+        text-align: center;
+        padding: 50px 20px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Animation Container */
+    .animation-container {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Company Name */
+    .company-name {
+        font-size: 4rem;
+        font-weight: bold;
+        letter-spacing: 2px;
+        color: white; /* Plain white color */
+        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.4); /* Optional subtle shadow for contrast */
+    }
+
+    /* Company Purpose */
+    .company-purpose {
+        font-size: 1.5rem;
+        margin-top: 20px;
+        font-style: italic;
+        opacity: 0;
+        animation: fadeInUp 2s ease-out 1s forwards;
+    }
+
+    /* Background Animations */
+    .animated-header::before {
+        content: '';
+        position: absolute;
+        top: -100px;
+        left: -100px;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.2) 10%, transparent 60%);
+        animation: moveBackground 8s linear infinite;
+        z-index: 0;
+    }
+
+/* Keyframes */
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes moveBackground {
+        0% {
+            transform: translate(0, 0) rotate(0deg);
+        }
+        100% {
+            transform: translate(-50%, -50%) rotate(360deg);
+        }
+    }
+
+
+/* 2nd header (not title) styling */
+    .header-overview {
+        background-color: #f4f6f8;
+        padding: 40px 20px;
+        /* border-bottom: 3px solid #6a11cb;  */
+        text-align: center;
+    }
+
+    /* Header Title Styling */
+    .header-title {
+        font-size: 3rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    /* Header Description Styling */
+    .header-description {
+        font-size: 1.2rem;
+        color: #555;
+        line-height: 1.6;
+        margin: 0 auto;
+        max-width: 800px; /* Restrict width for better readability */
+    }
+
