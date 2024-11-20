@@ -990,3 +990,106 @@
             console.error('Error fetching TypedDataSet:', error);
             }
     }
+
+//  -----------------------------------------------------------------------------------------------------------
+//  bankrupties-------------------------------------------------------------------------------------------  
+//  -----------------------------------------------------------------------------------------------------------  
+    function getTypedDataSetUrl_Bankrup(years, AlleBedrijfstakken, metadata) {
+        const yearFilters = years.map(year => `substringof('${year}', Perioden)`).join(' or ');
+        const btak = `TypeGefailleerde eq '${AlleBedrijfstakken.join("' or TypeGefailleerde eq '")}'`;
+        // const kenmerkenFilter = `KenmerkenBaan eq '${kenmerkenbaan}'`;
+        const filter = `${yearFilters} and ${btak}`;
+        const typedDataSetUrl = metadata.value.find(entity => entity.name === 'TypedDataSet').url + 
+            `?$filter=${filter}&$orderby=Perioden`; 
+        return typedDataSetUrl;
+    }
+
+    function Bankrup_populateTable(data, tableName, modifiedVariable) {
+        const tableBody = document.querySelector(`#${tableName} tbody`);
+        const lastModifiedElement = document.querySelector(`#Bankrup_mod`);
+        tableBody.innerHTML = '';
+        if (lastModifiedElement) {
+            lastModifiedElement.textContent = `Last update: ${formatDate(modifiedVariable)}`;
+        }
+        const periods = {}; 
+
+        data.forEach(item => {
+            if (!periods[item.Perioden]) {
+                periods[item.Perioden] = {
+                    "T001243": null,"A041718": null,"A028820": null,"A047597": null
+                };
+            }
+
+            const sector = item.TypeGefailleerde.trim();
+            periods[item.Perioden][sector] = item.UitgesprokenFaillissementen_1;
+            
+        });
+
+        const last12Entries = Object.entries(periods).slice(0,12);
+
+        // Populate the table rows
+        for (const [period, values] of last12Entries) {
+            const row = document.createElement("tr");
+            const periodCell = document.createElement("td");
+            periodCell.textContent = period;
+            row.appendChild(periodCell);
+
+            ["T001243","A041718","A028820","A047597"].forEach(sector => {
+                row.appendChild(createCell(values[sector]));
+            });
+            tableBody.appendChild(row);
+        }
+        return periods; 
+    }
+
+    function createBankrupChart(periods) {
+        const ctx = document.getElementById('BankrupChart').getContext('2d');
+
+        const periodLabels = Object.keys(periods).slice(0, 12).reverse();
+        const totalData = periodLabels.map(period => periods[period]["T001243"]);
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {labels: periodLabels,
+                datasets: [
+                    { label: 'Total bankrupties', data: totalData, borderColor: 'rgba(75, 192, 192)', fill: false, pointRadius: 1, pointHoverRadius: 5, },
+                ],
+            },
+            options: {
+                responsive: true, plugins: {legend: { display: false }},
+                scales: {x: { title: { display: false, text: 'Period' }, ticks: { maxTicksLimit: 6, autoSkip: true, }  },
+                    y: { title: { display: true, text: 'Number of bankrupties' }, beginAtZero: true },
+                },
+            },
+        });
+    }
+
+
+    export async function Bankrup_fetchTypedDataSet(years, AlleBedrijfstakken, html_table, metaTable) {
+        const typedDataSetUrl = getTypedDataSetUrl_Bankrup(years, AlleBedrijfstakken, metaTable);
+        const tableInfosUrl = metaTable.value.find(entity => entity.name === 'TableInfos').url;
+        try {const [typedDataResponse, tableInfosResponse] = await Promise.all([
+                fetch(typedDataSetUrl, { method: 'GET', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' } }),
+                fetch(tableInfosUrl, { method: 'GET', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' } })
+            ]);
+            if (!typedDataResponse.ok || !tableInfosResponse.ok) throw new Error('HTTP error fetching data');
+            
+            const typedData = await typedDataResponse.json();
+            const tableInfosData = await tableInfosResponse.json();
+
+            const modifiedDate = tableInfosData.value.length > 0 ? tableInfosData.value[0].Modified : 'Not Available';
+            const filteredData = typedData.value
+                .filter(item => 
+                    !item.Perioden.endsWith('00') &&
+                    !(item.Perioden.charAt(4) === 'K') &&
+                    !(item.Perioden.charAt(4) === 'J'))
+                .reverse()
+                .map(item => {item.Perioden = item.Perioden.replace(/MM/, '_');
+                    return item;
+                });
+            const periods = Bankrup_populateTable(filteredData, html_table, modifiedDate);
+            createBankrupChart(periods);
+        } catch (error) {
+            console.error('Error fetching TypedDataSet:', error);
+        }
+    }
