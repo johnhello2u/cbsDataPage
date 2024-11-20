@@ -39,8 +39,8 @@
                                     <tr>
                                         <th>Period</th>
                                         <th>Index</th>
-                                        <th>Month mutation</th>
-                                        <th>Year mutation</th>
+                                        <th>Month mutation(%)</th>
+                                        <th>Year mutation(%)</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -96,8 +96,8 @@
                                     <tr>
                                         <th>Period</th>
                                         <th>Index</th>
-                                        <th>Month mutation</th>
-                                        <th>Year mutation</th>
+                                        <th>Month mutation(%)</th>
+                                        <th>Year mutation(%)</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -151,13 +151,13 @@
                                 <thead>
                                     <tr>
                                         <th>Period</th>
-                                        <th>Trade</th>
-                                        <th>Transport&Storage</th>
-                                        <th>Catering</th>
-                                        <th>Tech&Commun</th>
-                                        <th>Real Estate</th>
-                                        <th>Services</th>
-                                        <th>Total</th>
+                                        <th>Trade(%)</th>
+                                        <th>Transport&Storage(%)</th>
+                                        <th>Catering(%)</th>
+                                        <th>Tech&Commun(%)</th>
+                                        <th>Real Estate(%)</th>
+                                        <th>Services(%)</th>
+                                        <th>Total(%)</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -183,10 +183,10 @@
                                     <tr>
                                         <th>Period</th>
                                         <th>Index</th>
-                                        <th>Month mutation</th>
-                                        <th>Year mutation index</th>
+                                        <th>Month mutation(%)</th>
+                                        <th>Year mutation index(%)</th>
                                         <th>Sold objects</th>
-                                        <th>Year mutation objects</th>
+                                        <th>Year mutation objects(%)</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -271,26 +271,28 @@
                     </div>
                 </div>
             </div>    
-            <!-- New Housing Price/Sale Index -->
-            <!-- <div class="col-lg-6 col-sm-12 mb-1">
+        </div>
+
+        <!-- R4-->
+        <div class="row custom-gutter">
+            <!-- Employment by branch -->
+            <div class="col-lg-6 col-sm-12 mb-1">
                 <div class="card shadow">
                     <div class="card-body">
                         <h1 class="card-title" data-toggle="tooltip" 
-                            title="This index measures the movement of housing prices over time in the Netherlands">
-                            Housing Prices and Sales Index</h1>
-                        <p id="housing_mod" class="card-text" style="margin-bottom: 0;"></p>
-                        <p class="card-text" style="margin-top: 0px;">Index base: 2020 = 100</p>
-                        <canvas id="HousingChart" style="margin-bottom: 15px"></canvas>
+                            title="Seasonally corrected volume of unemplyment rate (in 1000's)">
+                            Unemployment rate</h1>
+                        <p id="Unemploy_mod" class="card-text" style="margin-bottom: 0;"></p>
+                        <p class="card-text" style="margin-top: 0px;">Index base:</p>
+                        <canvas id="UnemployChart" style="margin-bottom: 15px"></canvas>
                         <div class="table-responsive">
-                            <table id="HousingTable" class="table table-hover">
+                            <table id="UnemployTable" class="table table-hover">
                                 <thead>
                                     <tr>
                                         <th>Period</th>
-                                        <th>Index</th>
-                                        <th>Month mutation</th>
-                                        <th>Year mutation</th>
-                                        <th>Sold objects</th>
-                                        <th>Year mutation</th>
+                                        <th>Total labor force(x1000)</th>
+                                        <th>Unemployment size(x1000)</th>
+                                        <th>Rate(%)</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -298,7 +300,43 @@
                         </div>
                     </div>
                 </div>
-            </div> -->
+            </div>
+            <!-- Salary by branch -->
+            <!-- <div class="col-lg-6 col-sm-12 mb-1">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h1 class="card-title" data-toggle="tooltip" 
+                            title="Average gross monthly salary by branch (including overtime and excluding other perks) using SBI2008">
+                            Salary by Industry</h1>
+                        <p id="Salary_mod" class="card-text" style="margin-bottom: 0;"></p>
+                        <p class="card-text" style="margin-top: 0px;">Index base:</p>
+                        <canvas id="SalaryChart" style="margin-bottom: 15px"></canvas>
+                        <div class="table-responsive">
+                            <table id="SalaryTable" class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Period</th>
+                                        <th>Total</th>
+                                        <th>Agriculture</th>
+                                        <th>Minning&Energy</th>
+                                        <th>Construction</th>
+                                        <th>Trade</th>
+                                        <th>Transport&Storage</th>
+                                        <th>Catering</th>
+                                        <th>Tech&Commun</th>
+                                        <th>Financial services</th>
+                                        <th>Real estate</th>
+                                        <th>Services</th>
+                                        <th>Governmental&Health</th>
+                                        <th>Recreation</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>     -->
         </div>
 
     </div>
@@ -391,23 +429,19 @@
                 { "name": "BedrijfstakkenBranchesSBI2008", "url": "https://opendata.cbs.nl/ODataApi/odata/83451NED/BedrijfstakkenBranchesSBI2008" },
                 { "name": "Perioden", "url": "https://opendata.cbs.nl/ODataApi/odata/83451NED/Perioden" }
             ]};
-
-            // KenmerkenBaan": "10000  " --> whole population   
-        /**
-         * ---- BedrijfstakkenBranchesSBI2008 ----
-         * A  (301000) Landbouw                                 Agriculture 
-         * B-E(300002) Nijverheid en energie                    Minning&Energy      
-         * F  (350000) Bouwnijverheid                           Construction
-         * G  (354200) Handel                                   Trade
-         * H  (383100) vervoer en oplsag                        Transport&Storage
-         * I  (389100) horeca                                   Catering
-         * J  (391600) Informatie en communicatie               Tech&Commun
-         * K  (396300) Financiële dienstverlening               Financial services
-         * L  (402000) Verhuur en handel van onroerend goed     Real estate
-         * M-N(300010) Zakelijke dienstverlening                Services 
-         * O-Q(300012) Overheid en zorg                         Governmental&Health
-         * R-U(300014) Cultuur, recreatie, overige diensten     Recreation 
-        */
+        
+        const unemploy_metadata = {"odata.metadata": "https://opendata.cbs.nl/ODataApi/OData/80590ned/$metadata",
+            "value": [
+                { "name": "TableInfos", "url": "https://opendata.cbs.nl/ODataApi/odata/80590ned/TableInfos" },
+                { "name": "UntypedDataSet", "url": "https://opendata.cbs.nl/ODataApi/odata/80590ned/UntypedDataSet" },
+                { "name": "TypedDataSet", "url": "https://opendata.cbs.nl/ODataApi/odata/80590ned/TypedDataSet" },
+                { "name": "DataProperties", "url": "https://opendata.cbs.nl/ODataApi/odata/80590ned/DataProperties" },
+                { "name": "CategoryGroups", "url": "https://opendata.cbs.nl/ODataApi/odata/80590ned/CategoryGroups" },
+                { "name": "Geslacht", "url": "https://opendata.cbs.nl/ODataApi/odata/80590ned/Geslacht" }, //T001038
+                { "name": "Leeftijd", "url": "https://opendata.cbs.nl/ODataApi/odata/80590ned/Leeftijd" }, //"52052   "
+                { "name": "Perioden", "url": "https://opendata.cbs.nl/ODataApi/odata/80590ned/Perioden" }
+            ]
+        };
 
         
         // harmonized cpi
@@ -466,7 +500,7 @@
 
         // testin ggettig the data sets  
         // const typedDataSetUrl = `${Service_industry_metadata.value.find(entity => entity.name === 'TypedDataSet').url}?$top=100`;
-        const typedDataSetUrl = `${employment_metadata.value.find(entity => entity.name === 'TypedDataSet').url}?$top=100&$filter=startswith(Perioden, '2024')`;
+        const typedDataSetUrl = `${unemploy_metadata.value.find(entity => entity.name === 'TypedDataSet').url}?$top=100&$filter=startswith(Perioden, '2024')`;
         // const typedDataSetUrl = `${con_senti_metadata.value.find(entity => entity.name === 'TypedDataSet').url}?$top=100&$filter=startswith(Perioden, '2024') and BedrijfstakkenBranchesSBI2008 eq '354200 '`;
         fetch(typedDataSetUrl, {
             method: 'GET',
@@ -505,7 +539,8 @@
 
 <script type="module">
     import { fetchTypedDataSet, PPI_fetchTypedDataSet, Service_fetchTypedDataSet, Housing_fetchTypedDataSet, 
-        ConSent_fetchTypedDataSet, ProdSent_fetchTypedDataSet, Employment_fetchTypedDataSet, Salary_fetchTypedDataSet
+        ConSent_fetchTypedDataSet, ProdSent_fetchTypedDataSet, Employment_fetchTypedDataSet, Salary_fetchTypedDataSet,
+        Unemploy_fetchTypedDataSet
         } from './myfuncs.js';
     fetchTypedDataSet(yearArray, 'T001112  ', "CpiTable", CPI_metadata); 
     ConSent_fetchTypedDataSet(yearArray, "cons_sentTable", con_senti_metadata); 
@@ -515,6 +550,7 @@
     Housing_fetchTypedDataSet(yearArray, 'T001112  ', "HousingTable", new_housing_metadata);
     Employment_fetchTypedDataSet(yearArray, ['T001081','301000 ', '300002 ', '350000 ','354200 ','383100 ','389100 ','391600 ','396300 ','402000 ','300010 ','300012 ','300014 '], "10000  ","EmployTable", employment_metadata); 
     Salary_fetchTypedDataSet(yearArray, ['T001081','301000 ', '300002 ', '350000 ','354200 ','383100 ','389100 ','391600 ','396300 ','402000 ','300010 ','300012 ','300014 '], "10000  ","SalaryTable", employment_metadata); 
+    Unemploy_fetchTypedDataSet(yearArray, "T001038", "52052   ","UnemployTable", unemploy_metadata); 
 </script>
 
 

@@ -888,3 +888,105 @@
             console.error('Error fetching TypedDataSet:', error);
         }
     }
+
+//  -----------------------------------------------------------------------------------------------------------
+//  Unemployment -------------------------------------------------------------------------------------------  
+//  -----------------------------------------------------------------------------------------------------------  
+    function getTypedDataSetUrl_Unemploy(years, geslacht, leeftijd,  metadata) {
+        const yearFilters = years.map(year => `substringof('${year}', Perioden)`).join(' or ');
+        const btak = `Geslacht eq '${geslacht}'`;
+        const kenmerkenFilter = `Leeftijd eq '${leeftijd}'`;
+        const filter = `${yearFilters} and ${btak} and ${kenmerkenFilter}`;
+        const typedDataSetUrl = metadata.value.find(entity => entity.name === 'TypedDataSet').url + 
+            `?$filter=${filter}&$orderby=Perioden`; 
+        return typedDataSetUrl;
+    }
+
+    function Unemploy_populateTable(data, tableName, modifiedVariable) {
+        const tableBody = document.querySelector(`#${tableName} tbody`);
+        const lastModifiedElement = document.querySelector(`#Unemploy_mod`);
+        tableBody.innerHTML = '';
+        if (lastModifiedElement) {
+            lastModifiedElement.textContent = `Last update: ${formatDate(modifiedVariable)}`;
+        }
+
+
+        data.forEach(item => {
+            const row = document.createElement("tr");
+
+            const periodCell = document.createElement("td");
+            periodCell.textContent = item.Perioden;
+            row.appendChild(periodCell);
+            const totalCell = document.createElement("td");
+            totalCell.textContent = item.Seizoengecorrigeerd_2;
+            row.appendChild(totalCell);
+            const umemployNCell = document.createElement("td");
+            umemployNCell.textContent = item.Seizoengecorrigeerd_6;
+            row.appendChild(umemployNCell);
+            const umemployRateCell = document.createElement("td");
+            umemployRateCell.textContent = item.Seizoengecorrigeerd_8;
+            row.appendChild(umemployRateCell);
+
+            tableBody.appendChild(row);
+        });
+    }
+
+
+    function createUnemployChart(data) {
+        const labels = data.map(item => item.Perioden);
+        const yearMutationData = data.map(item => parseFloat(item.Seizoengecorrigeerd_8));
+        const ctx = document.getElementById('UnemployChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{label: 'Unemployment rate (%)', data: yearMutationData, fill: false,
+                    borderColor: 'rgb(75, 192, 192)', tension: 0.1, pointRadius: 1, pointHoverRadius: 5,
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {legend: { display: false }},
+                scales: {
+                    x: {title: {display: false, text: 'Period'}, 
+                        ticks: {maxTicksLimit: 6, autoSkip: true, }  
+                    },
+                    y: {title: {display: true, text: 'Unemployment rate in (%)'}}
+                }
+            }
+        });
+    }
+
+    export async function Unemploy_fetchTypedDataSet(years, geslacht, leeftijd, html_table, metaTable) {
+        const typedDataSetUrl = getTypedDataSetUrl_Unemploy(years, geslacht, leeftijd, metaTable);
+        const tableInfosUrl = metaTable.value.find(entity => entity.name === 'TableInfos').url;
+        try {const [typedDataResponse, tableInfosResponse] = await Promise.all([
+                fetch(typedDataSetUrl, { method: 'GET', headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}}),
+                fetch(tableInfosUrl, {method: 'GET', headers: {'Accept': 'application/json', 'Content-Type': 'application/json'}})
+            ]);
+
+            if (!typedDataResponse.ok || !tableInfosResponse.ok) throw new Error('HTTP error fetching data');
+
+            const typedData = await typedDataResponse.json();
+            const tableInfosData = await tableInfosResponse.json();
+
+            const modifiedDate = tableInfosData.value.length > 0 ? tableInfosData.value[0].Modified : 'Not Available';
+
+            const filteredData = typedData.value
+                .filter(item => 
+                    !item.Perioden.endsWith('00') &&
+                    !(item.Perioden.charAt(4) === 'K') &&
+                    !(item.Perioden.charAt(4) === 'J'))
+                .reverse()
+                .slice(0,12)
+                .map(item => {item.Perioden = item.Perioden.replace(/MM/, '_');
+                    return item;
+            });
+
+            Unemploy_populateTable(filteredData, html_table, modifiedDate);
+            createUnemployChart(filteredData.reverse());
+            
+        } catch (error) {
+            console.error('Error fetching TypedDataSet:', error);
+            }
+    }
