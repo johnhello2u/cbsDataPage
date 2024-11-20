@@ -152,13 +152,13 @@
                 labels: labels,
                 datasets: [
                     {label: 'Consumer confidence', data: consumentenvertrouwenData,
-                        fill: false, borderColor: 'rgb(75, 192, 192)', tension: 0.1, pointRadius: 1, pointHoverRadius: 5,
+                        fill: false, borderColor: 'rgb(75, 192, 192)', tension: 0.1, pointRadius: 1, pointHoverRadius: 8,
                     },
                     {label: 'Economic climate', data: economischKlimaatData,
-                        fill: false, borderColor: 'rgb(255, 99, 132)', tension: 0.1, pointRadius: 1, pointHoverRadius: 5,
+                        fill: false, borderColor: 'rgb(255, 99, 132)', tension: 0.1, pointRadius: 1, pointHoverRadius: 8,
                     },
                     {label: 'Purchase confidence', data: koopbereidheidData,
-                        fill: false, borderColor: 'rgb(54, 162, 235)', tension: 0.1, pointRadius: 1, pointHoverRadius: 5,
+                        fill: false, borderColor: 'rgb(54, 162, 235)', tension: 0.1, pointRadius: 1, pointHoverRadius: 8,
                     }
                 ]
             },
@@ -260,7 +260,7 @@
                 labels: labels,
                 datasets: [{
                     label: 'Year Mutation (%)', data: yearMutationData,
-                    fill: false, borderColor: 'rgb(75, 192, 192)', tension: 0.1, pointRadius: 1, pointHoverRadius: 5,
+                    fill: false, borderColor: 'rgb(75, 192, 192)', tension: 0.1, pointRadius: 1, pointHoverRadius: 8,
                 }]
             },
             options: {
@@ -359,11 +359,11 @@
                 labels: labels,
                 datasets: [
                     {label: 'Producer confidence', data: producerVertrouwenData,
-                        fill: false, borderColor: 'rgb(75, 192, 192)', tension: 0.1, pointRadius: 1, pointHoverRadius: 5,},
+                        fill: false, borderColor: 'rgb(75, 192, 192)', tension: 0.1, pointRadius: 1, pointHoverRadius: 8,},
                     {label: 'Business expectations', data: busExpec,
-                        fill: false, borderColor: 'rgb(255, 99, 132)', tension: 0.1, pointRadius: 1, pointHoverRadius: 5,},
+                        fill: false, borderColor: 'rgb(255, 99, 132)', tension: 0.1, pointRadius: 1, pointHoverRadius: 8,},
                     {label: 'Order positions', data: orderConfi,
-                        fill: false, borderColor: 'rgb(54, 162, 235)', tension: 0.1, pointRadius: 1, pointHoverRadius: 5,}
+                        fill: false, borderColor: 'rgb(54, 162, 235)', tension: 0.1, pointRadius: 1, pointHoverRadius: 8,}
                 ]
             },
             options: {
@@ -509,12 +509,12 @@
             type: 'line',
             data: {labels: periodLabels,
                 datasets: [
-                    { label: 'Trade', data: tradeData, borderColor: 'rgba(75, 192, 192, 1)', fill: false, pointRadius: 1, pointHoverRadius: 5, },
-                    { label: 'Transport & Storage', data: transportStorageData, borderColor: 'rgba(54, 162, 235, 1)', fill: false, pointRadius: 1, pointHoverRadius: 5, },
-                    { label: 'Catering', data: cateringData, borderColor: 'rgba(255, 99, 132, 1)', fill: false, pointRadius: 1, pointHoverRadius: 5, },
-                    { label: 'Tech & Commun', data: techCommunicationData, borderColor: 'rgba(153, 102, 255, 1)', fill: false, pointRadius: 1, pointHoverRadius: 5, },
-                    { label: 'Real Estate', data: realEstateData, borderColor: 'rgba(255, 159, 64, 1)', fill: false, pointRadius: 1, pointHoverRadius: 5, },
-                    { label: 'Services', data: servicesData, borderColor: 'rgba(255, 205, 86, 1)', fill: false, pointRadius: 1, pointHoverRadius: 5, },
+                    { label: 'Trade', data: tradeData, borderColor: 'rgba(75, 192, 192, 1)', fill: false, pointRadius: 1, pointHoverRadius: 8, },
+                    { label: 'Transport & Storage', data: transportStorageData, borderColor: 'rgba(54, 162, 235, 1)', fill: false, pointRadius: 1, pointHoverRadius: 8, },
+                    { label: 'Catering', data: cateringData, borderColor: 'rgba(255, 99, 132, 1)', fill: false, pointRadius: 1, pointHoverRadius: 8, },
+                    { label: 'Tech & Commun', data: techCommunicationData, borderColor: 'rgba(153, 102, 255, 1)', fill: false, pointRadius: 1, pointHoverRadius: 8, },
+                    { label: 'Real Estate', data: realEstateData, borderColor: 'rgba(255, 159, 64, 1)', fill: false, pointRadius: 1, pointHoverRadius: 8, },
+                    { label: 'Services', data: servicesData, borderColor: 'rgba(255, 205, 86, 1)', fill: false, pointRadius: 1, pointHoverRadius: 8, },
                     // { label: 'Total', data: totalData, borderColor: 'rgba(100, 100, 100, 1)', fill: false, pointRadius: 1, pointHoverRadius: 5, },
                 ],
             },
@@ -621,7 +621,7 @@
             data: {
                 labels: labels,
                 datasets: [{label: 'Year Mutation (%)', data: yearMutationData, fill: false,
-                    borderColor: 'rgb(75, 192, 192)', tension: 0.1, pointRadius: 1, pointHoverRadius: 5,
+                    borderColor: 'rgb(75, 192, 192)', tension: 0.1, pointRadius: 1, pointHoverRadius: 8,
                 }]
             },
             options: {
@@ -745,7 +745,7 @@
                     // { label: 'Tech & Commun', data: techCommunicationData, borderColor: 'rgba(153, 102, 255, 1)', fill: false },
                     // { label: 'Real Estate', data: realEstateData, borderColor: 'rgba(255, 159, 64, 1)', fill: false },
                     // { label: 'Services', data: servicesData, borderColor: 'rgba(255, 205, 86, 1)', fill: false },
-                    { label: 'Total', data: totalData, borderColor: 'rgba(75, 192, 192)', fill: false, pointRadius: 1, pointHoverRadius: 5, },
+                    { label: 'Total', data: totalData, borderColor: 'rgba(75, 192, 192)', fill: false, pointRadius: 1, pointHoverRadius: 8, },
                 ],
             },
             options: {
@@ -848,7 +848,7 @@
             type: 'line',
             data: {labels: periodLabels,
                 datasets: [
-                    { label: 'Total', data: totalData, borderColor: 'rgba(75, 192, 192)', fill: false, pointRadius: 1, pointHoverRadius: 5, },
+                    { label: 'Total', data: totalData, borderColor: 'rgba(75, 192, 192)', fill: false, pointRadius: 1, pointHoverRadius: 8, },
                 ],
             },
             options: {
@@ -941,7 +941,7 @@
             data: {
                 labels: labels,
                 datasets: [{label: 'Unemployment rate (%)', data: yearMutationData, fill: false,
-                    borderColor: 'rgb(75, 192, 192)', tension: 0.1, pointRadius: 1, pointHoverRadius: 5,
+                    borderColor: 'rgb(75, 192, 192)', tension: 0.1, pointRadius: 1, pointHoverRadius: 8,
                 }]
             },
             options: {
@@ -1052,7 +1052,7 @@
             type: 'line',
             data: {labels: periodLabels,
                 datasets: [
-                    { label: 'Total bankrupties', data: totalData, borderColor: 'rgba(75, 192, 192)', fill: false, pointRadius: 1, pointHoverRadius: 5, },
+                    { label: 'Total bankrupties', data: totalData, borderColor: 'rgba(75, 192, 192)', fill: false, pointRadius: 1, pointHoverRadius: 8, },
                 ],
             },
             options: {
