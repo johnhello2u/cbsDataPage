@@ -319,7 +319,7 @@
                     <div class="card-body">
                         <h1 class="card-title" data-toggle="tooltip" 
                             title="Monthly number of bankrupties on a total, and by their respective legal forms">
-                            Bankruptcies</h1>
+                            Bankruptcy</h1>
                         <p id="Bankrup_mod" class="card-text" style="margin-bottom: 0;"></p>
                         <p class="card-text" style="margin-top: 0px;">Index base:</p>
                         <canvas id="BankrupChart" style="margin-bottom: 15px"></canvas>
@@ -340,6 +340,63 @@
                     </div>
                 </div>
             </div>    
+        </div>
+
+        <!-- R5-->
+        <div class="row custom-gutter">
+            <!-- population growth -->
+            <div class="col-lg-6 col-sm-12 mb-1">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h1 class="card-title" data-toggle="tooltip" 
+                            title="The population size on a month by month basis">
+                            Population growth</h1>
+                        <p id="Population_mod" class="card-text" style="margin-bottom: 0;"></p>
+                        <p class="card-text" style="margin-top: 0px;">Index base:</p>
+                        <canvas id="PopulationChart" style="margin-bottom: 15px"></canvas>
+                        <div class="table-responsive">
+                            <table id="PopulationTable" class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Period</th>
+                                        <th>Total Population</th>
+                                        <th>population growth</th>
+                                        <th>Rate(%)</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- tourism -->
+            <!-- <div class="col-lg-6 col-sm-12 mb-1">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h1 class="card-title" data-toggle="tooltip" 
+                            title="Monthly number of bankrupties on a total, and by their respective legal forms">
+                            Bankruptcies</h1>
+                        <p id="Bankrup_mod" class="card-text" style="margin-bottom: 0;"></p>
+                        <p class="card-text" style="margin-top: 0px;">Index base:</p>
+                        <canvas id="BankrupChart" style="margin-bottom: 15px"></canvas>
+                        <div class="table-responsive">
+                            <table id="BankrupTable" class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Period</th>
+                                        <th>Total</th>
+                                        <th>Natural persons</th>
+                                        <th>General partnerships</th>
+                                        <th>Corporations</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>     -->
         </div>
 
     </div>
@@ -456,6 +513,16 @@
                 { "name": "Perioden", "url": "https://opendata.cbs.nl/ODataApi/odata/82242NED/Perioden" }
             ]};
 
+        const population_metadata = {"odata.metadata": "https://opendata.cbs.nl/ODataApi/OData/83474NED/$metadata",
+            "value": [
+                { "name": "TableInfos", "url": "https://opendata.cbs.nl/ODataApi/odata/83474NED/TableInfos" },
+                { "name": "UntypedDataSet", "url": "https://opendata.cbs.nl/ODataApi/odata/83474NED/UntypedDataSet" },
+                { "name": "TypedDataSet", "url": "https://opendata.cbs.nl/ODataApi/odata/83474NED/TypedDataSet" },
+                { "name": "DataProperties", "url": "https://opendata.cbs.nl/ODataApi/odata/83474NED/DataProperties" },
+                { "name": "CategoryGroups", "url": "https://opendata.cbs.nl/ODataApi/odata/83474NED/CategoryGroups" },
+                { "name": "Perioden", "url": "https://opendata.cbs.nl/ODataApi/odata/83474NED/Perioden" }
+            ]};
+
 
         
         // harmonized cpi
@@ -465,7 +532,7 @@
         // unemployment
         // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=80590ned&_theme=11 XXXX
         // bankrupties
-        // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=82242NED&_theme=42
+        // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=82242NED&_theme=42 XXXX
         // bevolking 
         // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=83474NED&_theme=62
         // woningen
@@ -514,7 +581,7 @@
 
         // testin ggettig the data sets  
         // const typedDataSetUrl = `${Service_industry_metadata.value.find(entity => entity.name === 'TypedDataSet').url}?$top=100`;
-        const typedDataSetUrl = `${bankruptcy_metadata.value.find(entity => entity.name === 'TypedDataSet').url}?$top=100&$filter=startswith(Perioden, '2024')`;
+        const typedDataSetUrl = `${population_metadata.value.find(entity => entity.name === 'TypedDataSet').url}?$top=100&$filter=startswith(Perioden, '2024')`;
         // const typedDataSetUrl = `${con_senti_metadata.value.find(entity => entity.name === 'TypedDataSet').url}?$top=100&$filter=startswith(Perioden, '2024') and BedrijfstakkenBranchesSBI2008 eq '354200 '`;
         fetch(typedDataSetUrl, {
             method: 'GET',
@@ -554,7 +621,7 @@
 <script type="module">
     import { fetchTypedDataSet, PPI_fetchTypedDataSet, Service_fetchTypedDataSet, Housing_fetchTypedDataSet, 
         ConSent_fetchTypedDataSet, ProdSent_fetchTypedDataSet, Employment_fetchTypedDataSet, Salary_fetchTypedDataSet,
-        Unemploy_fetchTypedDataSet, Bankrup_fetchTypedDataSet
+        Unemploy_fetchTypedDataSet, Bankrup_fetchTypedDataSet, Popu_fetchTypedDataSet
         } from './myfuncs.js';
     fetchTypedDataSet(yearArray, 'T001112  ', "CpiTable", CPI_metadata); 
     ConSent_fetchTypedDataSet(yearArray, "cons_sentTable", con_senti_metadata); 
@@ -566,6 +633,7 @@
     Salary_fetchTypedDataSet(yearArray, ['T001081','301000 ', '300002 ', '350000 ','354200 ','383100 ','389100 ','391600 ','396300 ','402000 ','300010 ','300012 ','300014 '], "10000  ","SalaryTable", employment_metadata); 
     Unemploy_fetchTypedDataSet(yearArray, "T001038", "52052   ","UnemployTable", unemploy_metadata); 
     Bankrup_fetchTypedDataSet(yearArray, ["T001243","A041718","A028820","A047597"],"BankrupTable", bankruptcy_metadata); 
+    Popu_fetchTypedDataSet(yearArray,"PopulationTable", population_metadata); 
 </script>
 
 

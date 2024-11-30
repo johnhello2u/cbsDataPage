@@ -1006,7 +1006,7 @@
 
     function Bankrup_populateTable(data, tableName, modifiedVariable) {
         const tableBody = document.querySelector(`#${tableName} tbody`);
-        const lastModifiedElement = document.querySelector(`#Bankrup_mod`);
+        const lastModifiedElement = document.querySelector(`#Population_mod`);
         tableBody.innerHTML = '';
         if (lastModifiedElement) {
             lastModifiedElement.textContent = `Last update: ${formatDate(modifiedVariable)}`;
@@ -1089,6 +1089,110 @@
                 });
             const periods = Bankrup_populateTable(filteredData, html_table, modifiedDate);
             createBankrupChart(periods);
+        } catch (error) {
+            console.error('Error fetching TypedDataSet:', error);
+        }
+    }
+
+
+//  -----------------------------------------------------------------------------------------------------------
+//  Population-------------------------------------------------------------------------------------------  
+//  -----------------------------------------------------------------------------------------------------------  
+    function getTypedDataSetUrl_Popu(years, metadata) {
+        const yearFilters = years.map(year => `substringof('${year}', Perioden)`).join(' or ');
+        const filter = `${yearFilters}`;
+        const typedDataSetUrl = metadata.value.find(entity => entity.name === 'TypedDataSet').url + 
+            `?$filter=${filter}&$orderby=Perioden`; 
+        return typedDataSetUrl;
+    }
+
+    function Popu_populateTable(data, tableName, modifiedVariable) {
+        const tableBody = document.querySelector(`#${tableName} tbody`);
+        const lastModifiedElement = document.querySelector(`#Population_mod`);
+        tableBody.innerHTML = '';
+        if (lastModifiedElement) {
+            lastModifiedElement.textContent = `Last update: ${formatDate(modifiedVariable)}`;
+        }
+
+        data.forEach(item => {
+            const row = document.createElement("tr");
+
+            const periodCell = document.createElement("td");
+            periodCell.textContent = item.Perioden;
+            row.appendChild(periodCell);
+            const population = document.createElement("td");
+            population.textContent = item.BevolkingAanHetBeginVanDePeriode_1;
+            row.appendChild(population);
+            const growth = document.createElement("td");
+            growth.textContent = item.TotaleBevolkingsgroei_7;
+            row.appendChild(growth);
+            const rate = document.createElement("td");
+            rate.textContent = item.Rate_growth;
+            row.appendChild(rate);
+
+            tableBody.appendChild(row);
+        });
+    }
+
+
+    function createPopuChart(data) {
+        const labels = data.map(item => item.Perioden);
+        const yearMutationData = data.map(item => parseFloat(item.BevolkingAanHetBeginVanDePeriode_1));
+        const ctx = document.getElementById('PopulationChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{label: 'Population', data: yearMutationData, fill: false,
+                    borderColor: 'rgb(75, 192, 192)', tension: 0.1, pointRadius: 1, pointHoverRadius: 8,
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {legend: { display: false }},
+                scales: {
+                    x: {title: {display: false, text: 'Period'}, 
+                        ticks: {maxTicksLimit: 6, autoSkip: true, }  
+                    },
+                    y: {title: {display: true, text: 'Population'}}
+                }
+            }
+        });
+    }
+
+
+    export async function Popu_fetchTypedDataSet(years, html_table, metaTable) {
+        const typedDataSetUrl = getTypedDataSetUrl_Popu(years, metaTable);
+        const tableInfosUrl = metaTable.value.find(entity => entity.name === 'TableInfos').url;
+        try {const [typedDataResponse, tableInfosResponse] = await Promise.all([
+                fetch(typedDataSetUrl, { method: 'GET', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' } }),
+                fetch(tableInfosUrl, { method: 'GET', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' } })
+            ]);
+            if (!typedDataResponse.ok || !tableInfosResponse.ok) throw new Error('HTTP error fetching data');
+            
+            const typedData = await typedDataResponse.json();
+            const tableInfosData = await tableInfosResponse.json();
+
+            const modifiedDate = tableInfosData.value.length > 0 ? tableInfosData.value[0].Modified : 'Not Available';
+            const filteredData = typedData.value
+                .filter(item => 
+                    !item.Perioden.endsWith('00') &&
+                    !(item.Perioden.charAt(4) === 'K') &&
+                    !(item.Perioden.charAt(4) === 'J'))
+                .reverse()
+                .slice(0,12)
+                .map(item => {item.Perioden = item.Perioden.replace(/MM/, '_');
+                    // Calculate the rate% and add it as a new property
+                    if (item.TotaleBevolkingsgroei_7 && item.BevolkingAanHetBeginVanDePeriode_1) {
+                        const rate = (item.TotaleBevolkingsgroei_7 / item.BevolkingAanHetBeginVanDePeriode_1) * 100;
+                        item["Rate_growth"] = `${rate.toFixed(3)}%`; // Round to 3 decimals and append '%'
+                    } else {
+                        item["Rate_growth"] = null; 
+                    }
+                    return item;
+                });
+            const periods = Popu_populateTable(filteredData, html_table, modifiedDate);
+            createPopuChart(filteredData.reverse());
         } catch (error) {
             console.error('Error fetching TypedDataSet:', error);
         }
