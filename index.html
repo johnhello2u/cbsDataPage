@@ -23,7 +23,7 @@
 
     <header class="header-overview">
         <div class="header-content">
-            <h1 class="header-title">Statistical Data Overview</h1>
+            <!-- <h1 class="header-title">Statistical Data Overview</h1> -->
             <p class="header-description">
                 Dive into key macroeconomic indicators powered by the Dutch Central Bureau of Statistics (CBS). 
                 Gain insights into price indices, consumer and producer sentiment, trade and services turnover, housing trends, and labor market dynamics.
@@ -371,24 +371,28 @@
                 </div>
             </div>
             <!-- tourism -->
-            <!-- <div class="col-lg-6 col-sm-12 mb-1">
+            <div class="col-lg-6 col-sm-12 mb-1">
                 <div class="card shadow">
                     <div class="card-body">
                         <h1 class="card-title" data-toggle="tooltip" 
-                            title="Monthly number of bankrupties on a total, and by their respective legal forms">
-                            Bankruptcies</h1>
-                        <p id="Bankrup_mod" class="card-text" style="margin-bottom: 0;"></p>
+                            title="Monthly number of of hotel guests stays">
+                            Tourism stays</h1>
+                        <p id="stayTourism_mod" class="card-text" style="margin-bottom: 0;"></p>
                         <p class="card-text" style="margin-top: 0px;">Index base:</p>
-                        <canvas id="BankrupChart" style="margin-bottom: 15px"></canvas>
+                        <canvas id="stayTourismChart" style="margin-bottom: 15px"></canvas>
                         <div class="table-responsive">
-                            <table id="BankrupTable" class="table table-hover">
+                            <table id="stayTourismTable" class="table table-hover">
                                 <thead>
                                     <tr>
                                         <th>Period</th>
-                                        <th>Total</th>
-                                        <th>Natural persons</th>
-                                        <th>General partnerships</th>
-                                        <th>Corporations</th>
+                                        <th>Total stays</th>
+                                        <th>(%) in Amsterdam</th>
+                                        <th>Domestic</th>
+                                        <th>Europe</th>
+                                        <th>Americas</th>
+                                        <th>Asia</th>
+                                        <th>Oceania</th>
+                                        <th>Africa</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -396,14 +400,14 @@
                         </div>
                     </div>
                 </div>
-            </div>     -->
+            </div>    
         </div>
 
     </div>
     
     
     <footer>
-        <p>© 2024 Oyiko JC services All Rights Reserved</p>
+        <p>© 2024 Oyiko (JC) services All Rights Reserved</p>
     </footer>
 
     <script>
@@ -523,6 +527,19 @@
                 { "name": "Perioden", "url": "https://opendata.cbs.nl/ODataApi/odata/83474NED/Perioden" }
             ]};
 
+        const hotelTourism_metadata = {"odata.metadata": "https://opendata.cbs.nl/ODataApi/OData/82061NED/$metadata",
+            "value": [
+                { "name": "TableInfos", "url": "https://opendata.cbs.nl/ODataApi/odata/82061NED/TableInfos" },
+                { "name": "UntypedDataSet", "url": "https://opendata.cbs.nl/ODataApi/odata/82061NED/UntypedDataSet" },
+                { "name": "TypedDataSet", "url": "https://opendata.cbs.nl/ODataApi/odata/82061NED/TypedDataSet" },
+                { "name": "DataProperties", "url": "https://opendata.cbs.nl/ODataApi/odata/82061NED/DataProperties" },
+                { "name": "CategoryGroups", "url": "https://opendata.cbs.nl/ODataApi/odata/82061NED/CategoryGroups" },
+                { "name": "WoonlandVanGasten", "url": "https://opendata.cbs.nl/ODataApi/odata/82061NED/WoonlandVanGasten" },
+                { "name": "RegioS", "url": "https://opendata.cbs.nl/ODataApi/odata/82061NED/RegioS" },
+                { "name": "Perioden", "url": "https://opendata.cbs.nl/ODataApi/odata/82061NED/Perioden" }
+            ]};
+
+
 
         
         // harmonized cpi
@@ -534,11 +551,9 @@
         // bankrupties
         // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=82242NED&_theme=42 XXXX
         // bevolking 
-        // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=83474NED&_theme=62
+        // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=83474NED&_theme=62 XXXX
         // woningen
         // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=85773NED&_theme=395 XXXX
-        // bouwontwikkeling
-        // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=85809NED&_theme=98
         // inputprijzen nieuwbouw
         // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=80444ned&_theme=393
         // inputprijzen per bouwtype 
@@ -553,6 +568,8 @@
         // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=83693NED&_theme=189 XXXX
         // tourism 
         // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=82058NED&_theme=445
+        //  tourism by regions
+        // https://opendata.cbs.nl/statline/portal.html?_catalog=CBS&_la=nl&tableId=82061NED&_theme=446
 
         
 
@@ -581,8 +598,8 @@
 
         // testin ggettig the data sets  
         // const typedDataSetUrl = `${Service_industry_metadata.value.find(entity => entity.name === 'TypedDataSet').url}?$top=100`;
-        const typedDataSetUrl = `${population_metadata.value.find(entity => entity.name === 'TypedDataSet').url}?$top=100&$filter=startswith(Perioden, '2024')`;
-        // const typedDataSetUrl = `${con_senti_metadata.value.find(entity => entity.name === 'TypedDataSet').url}?$top=100&$filter=startswith(Perioden, '2024') and BedrijfstakkenBranchesSBI2008 eq '354200 '`;
+        // const typedDataSetUrl = `${hotelTourism_metadata.value.find(entity => entity.name === 'TypedDataSet').url}?$top=100&$filter=startswith(Perioden, '2024')`;
+        const typedDataSetUrl = `${hotelTourism_metadata.value.find(entity => entity.name === 'TypedDataSet').url}?$top=100&$filter=startswith(Perioden, '2024') and WoonlandVanGasten eq 'T001047'`;
         fetch(typedDataSetUrl, {
             method: 'GET',
             headers: {
@@ -597,7 +614,7 @@
         })
         .then(data => {
             // console.log("FETCHFETCH:", data.value.slice(0, 5)); // Display first 5 entries as sample
-            console.log("FETCHFETCH:", JSON.stringify(data.value.slice(0, 100), null, 2));
+            // console.log("FETCHFETCH:", JSON.stringify(data.value.slice(0, 100), null, 2));
         })
 
 
@@ -621,7 +638,7 @@
 <script type="module">
     import { fetchTypedDataSet, PPI_fetchTypedDataSet, Service_fetchTypedDataSet, Housing_fetchTypedDataSet, 
         ConSent_fetchTypedDataSet, ProdSent_fetchTypedDataSet, Employment_fetchTypedDataSet, Salary_fetchTypedDataSet,
-        Unemploy_fetchTypedDataSet, Bankrup_fetchTypedDataSet, Popu_fetchTypedDataSet
+        Unemploy_fetchTypedDataSet, Bankrup_fetchTypedDataSet, Popu_fetchTypedDataSet, stayTourism_fetchTypedDataSet
         } from './myfuncs.js';
     fetchTypedDataSet(yearArray, 'T001112  ', "CpiTable", CPI_metadata); 
     ConSent_fetchTypedDataSet(yearArray, "cons_sentTable", con_senti_metadata); 
@@ -634,6 +651,7 @@
     Unemploy_fetchTypedDataSet(yearArray, "T001038", "52052   ","UnemployTable", unemploy_metadata); 
     Bankrup_fetchTypedDataSet(yearArray, ["T001243","A041718","A028820","A047597"],"BankrupTable", bankruptcy_metadata); 
     Popu_fetchTypedDataSet(yearArray,"PopulationTable", population_metadata); 
+    stayTourism_fetchTypedDataSet(yearArray, ["T001047","L008691","L008525","L008520","L008524","L008531","L008519"],"GM0363","stayTourismTable", hotelTourism_metadata);
 </script>
 
 

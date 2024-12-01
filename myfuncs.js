@@ -199,7 +199,6 @@
                 });
 
             ConSent_populateTable(filteredData, html_table, modifiedDate);
-            console.log(filteredData);
             createConSentChart(filteredData.reverse());
             
         } catch (error) {
@@ -1006,7 +1005,7 @@
 
     function Bankrup_populateTable(data, tableName, modifiedVariable) {
         const tableBody = document.querySelector(`#${tableName} tbody`);
-        const lastModifiedElement = document.querySelector(`#Population_mod`);
+        const lastModifiedElement = document.querySelector(`#Bankrup_mod`);
         tableBody.innerHTML = '';
         if (lastModifiedElement) {
             lastModifiedElement.textContent = `Last update: ${formatDate(modifiedVariable)}`;
@@ -1193,6 +1192,149 @@
                 });
             const periods = Popu_populateTable(filteredData, html_table, modifiedDate);
             createPopuChart(filteredData.reverse());
+        } catch (error) {
+            console.error('Error fetching TypedDataSet:', error);
+        }
+    }
+
+
+
+//  -----------------------------------------------------------------------------------------------------------
+//  hotel stays-------------------------------------------------------------------------------------------  
+//  -----------------------------------------------------------------------------------------------------------  
+    function getTypedDataSetUrl_stayTourism(years,regions, ams_indi, metadata) {
+        const yearFilters = years.map(year => `substringof('${year}', Perioden)`).join(' or ');
+        const btak = `WoonlandVanGasten eq '${regions.join("' or WoonlandVanGasten eq '")}'`;
+        const btak_ams = `RegioS eq '${ams_indi}'`;
+        // const kenmerkenFilter = `KenmerkenBaan eq '${kenmerkenbaan}'`;
+        const filter = `${yearFilters} and ${btak}`;
+
+        const filter_amsterdam = `${yearFilters} and ${btak_ams}`;
+        const typedDataSetUrl = metadata.value.find(entity => entity.name === 'TypedDataSet').url + 
+            `?$filter=${filter}&$orderby=Perioden`; 
+            const typedDataSetUrl_amsterdam = metadata.value.find(entity => entity.name === 'TypedDataSet').url + 
+            `?$filter=${filter_amsterdam}&$orderby=Perioden`; 
+        return {
+            typedDataSetUrl,
+            typedDataSetUrl_amsterdam
+        };
+    }
+
+    function stayTourism_populateTable(data, data_amsterdam, tableName, modifiedVariable) {
+        const tableBody = document.querySelector(`#${tableName} tbody`);
+        const lastModifiedElement = document.querySelector(`#stayTourism_mod`);
+        tableBody.innerHTML = '';
+        if (lastModifiedElement) {
+            lastModifiedElement.textContent = `Last update: ${formatDate(modifiedVariable)}`;
+        }
+        const periods = {};
+        const periods_ams = {}; 
+
+        data.forEach(item => {
+            if (!periods[item.Perioden]) {
+                periods[item.Perioden] = {
+                    "T001047": null, "ams_total": null,"L008691": null,"L008525": null,"L008520": null,"L008524": null,"L008531": null,"L008519": null
+                };
+            }
+            const sector = item.WoonlandVanGasten.trim();
+            periods[item.Perioden][sector] = item.Gasten_1;
+            
+        });
+
+        // filteron ams, and if perioden matches with period table
+        data_amsterdam.forEach(item => {
+            if (item.WoonlandVanGasten.trim() === "T001047" && periods[item.Perioden]) {
+                const total = periods[item.Perioden]["T001047"];
+                const amsTotal = item.Gasten_1;
+                // periods[item.Perioden].ams_total = item.Gasten_1; // Assign `ams_total`
+                if (total) {
+                    const percentage = (amsTotal / total) * 100;
+                    periods[item.Perioden]["perAmster"] = `${percentage.toFixed(1)}%`;
+                } else {
+                    periods[item.Perioden]["perAmster"] = "N/A";
+                }
+            }
+        });
+
+        console.log(periods);
+        // console.log(data_amsterdam);
+
+        const last12Entries = Object.entries(periods).slice(0,12);
+
+        // Populate the table rows
+        for (const [period, values] of last12Entries) {
+            const row = document.createElement("tr");
+            const periodCell = document.createElement("td");
+            periodCell.textContent = period;
+            row.appendChild(periodCell);
+
+            ["T001047","perAmster","L008691","L008525","L008520","L008524","L008531","L008519"].forEach(sector => {
+                row.appendChild(createCell(values[sector]));
+            });
+            tableBody.appendChild(row);
+        }
+        return periods; 
+    }
+
+    function createstayTourismChart(periods) {
+        const ctx = document.getElementById('stayTourismChart').getContext('2d');
+
+        const periodLabels = Object.keys(periods).slice(0, 12).reverse();
+        const totalData = periodLabels.map(period => periods[period]["T001047"]);
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {labels: periodLabels,
+                datasets: [
+                    { label: 'Total stays', data: totalData, borderColor: 'rgba(75, 192, 192)', fill: false, pointRadius: 1, pointHoverRadius: 8, },
+                ],
+            },
+            options: {
+                responsive: true, plugins: {legend: { display: false }},
+                scales: {x: { title: { display: false, text: 'Period' }, ticks: { maxTicksLimit: 6, autoSkip: true, }  },
+                    y: { title: { display: true, text: 'Stays' }, beginAtZero: true },
+                },
+            },
+        });
+    }
+
+
+    export async function stayTourism_fetchTypedDataSet(years, regions, ams_indi, html_table, metaTable) {
+        const { typedDataSetUrl, typedDataSetUrl_amsterdam } = getTypedDataSetUrl_stayTourism(years, regions, ams_indi, metaTable);
+        const tableInfosUrl = metaTable.value.find(entity => entity.name === 'TableInfos').url;
+        try {const [typedDataResponse, typedDataResponse_amsterdam, tableInfosResponse] = await Promise.all([
+                fetch(typedDataSetUrl, { method: 'GET', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' } }),
+                fetch(typedDataSetUrl_amsterdam, { method: 'GET', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' } }),
+                fetch(tableInfosUrl, { method: 'GET', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' } })
+            ]);
+            if (!typedDataResponse.ok || !tableInfosResponse.ok) throw new Error('HTTP error fetching data');
+            
+            const typedData = await typedDataResponse.json();
+            const typedData_amsterdam = await typedDataResponse_amsterdam.json();
+            const tableInfosData = await tableInfosResponse.json();
+
+            const modifiedDate = tableInfosData.value.length > 0 ? tableInfosData.value[0].Modified : 'Not Available';
+            const filteredData = typedData.value
+                .filter(item => 
+                    !item.Perioden.endsWith('00') &&
+                    !(item.Perioden.charAt(4) === 'K') &&
+                    !(item.Perioden.charAt(4) === 'J'))
+                .reverse()
+                .map(item => {item.Perioden = item.Perioden.replace(/MM/, '_');
+                    return item;
+                });
+
+            const filteredData_amsterdam = typedData_amsterdam.value
+                .filter(item => 
+                    !item.Perioden.endsWith('00') &&
+                    !(item.Perioden.charAt(4) === 'K') &&
+                    !(item.Perioden.charAt(4) === 'J'))
+                .reverse()
+                .map(item => {item.Perioden = item.Perioden.replace(/MM/, '_');
+                    return item;
+                });
+            const periods = stayTourism_populateTable(filteredData, filteredData_amsterdam, html_table, modifiedDate);
+            createstayTourismChart(periods);
         } catch (error) {
             console.error('Error fetching TypedDataSet:', error);
         }
