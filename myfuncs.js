@@ -614,18 +614,23 @@
     function createHousingChart(data) {
         const labels = data.map(item => item.Perioden);
         const yearMutationData = data.map(item => parseFloat(item.OntwikkelingTOVEenJaarEerder_3));
+        const yearMutationData_objects = data.map(item => parseFloat(item.OntwikkelingTOVEenJaarEerder_6));
         const ctx = document.getElementById('HousingChart').getContext('2d');
         new Chart(ctx, {
             type: 'line',
             data: {
                 labels: labels,
-                datasets: [{label: 'Year Mutation (%)', data: yearMutationData, fill: false,
-                    borderColor: 'rgb(75, 192, 192)', tension: 0.1, pointRadius: 1, pointHoverRadius: 8,
-                }]
+                datasets: [
+                    {label: 'Year Mutation price(%)', data: yearMutationData, fill: false,
+                        borderColor: 'rgb(75, 192, 192)', tension: 0.1, pointRadius: 1, pointHoverRadius: 8,},
+                    {label: 'Year Mutation objects(%)', data: yearMutationData_objects, fill: false,
+                        borderColor: 'rgb(255, 99, 132)', tension: 0.1, pointRadius: 1, pointHoverRadius: 8,}
+
+            ]
             },
             options: {
                 responsive: true,
-                plugins: {legend: { display: false }},
+                plugins: {legend: { display: true }},
                 scales: {
                     x: {title: {display: false, text: 'Period'}, 
                         ticks: {maxTicksLimit: 6, autoSkip: true, }  
@@ -635,6 +640,7 @@
             }
         });
     }
+
 
     export async function Housing_fetchTypedDataSet(years, category, html_table, metaTable) {
         const typedDataSetUrl = getTypedDataSetUrl_Housing(years, category, metaTable);
