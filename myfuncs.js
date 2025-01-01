@@ -1345,3 +1345,138 @@
             console.error('Error fetching TypedDataSet:', error);
         }
     }
+
+
+//  -----------------------------------------------------------------------------------------------------------
+//  Energy production-------------------------------------------------------------------------------------------  
+//  -----------------------------------------------------------------------------------------------------------  
+function getTypedDataSetUrl_energyProd(years, metadata) {
+    const yearFilters = years.map(year => `substringof('${year}', Perioden)`).join(' or ');
+    const filter = `${yearFilters}`;
+    const typedDataSetUrl = metadata.value.find(entity => entity.name === 'TypedDataSet').url + 
+        `?$filter=${filter}&$orderby=Perioden`; 
+    return typedDataSetUrl;
+}
+
+function energyProd_populateTable(data, tableName, modifiedVariable) {
+    const tableBody = document.querySelector(`#${tableName} tbody`);
+    const lastModifiedElement = document.querySelector(`#energyProd_mod`);
+    tableBody.innerHTML = '';
+    if (lastModifiedElement) {
+        lastModifiedElement.textContent = `Last update: ${formatDate(modifiedVariable)}`;
+    }
+
+    data.forEach(item => {
+        const row = document.createElement("tr");
+        const periodCell = document.createElement("td");
+        periodCell.textContent = item.Perioden;
+        row.appendChild(periodCell);
+
+        const TotalProd = document.createElement("td");
+        TotalProd.textContent = item.NettoProductieTotaal_3;
+        row.appendChild(TotalProd);
+
+        const fossilFuel = document.createElement("td");
+        fossilFuel.textContent = item.Fossil_fuel;
+        row.appendChild(fossilFuel);
+
+        const NastGas = document.createElement("td");
+        NastGas.textContent = item.Aardgas_8;
+        row.appendChild(NastGas);
+
+        const susEnergy = document.createElement("td");
+        susEnergy.textContent = item.Sust_energy;
+        row.appendChild(susEnergy);
+
+        const Biomass = document.createElement("td");
+        Biomass.textContent = item.Biomassa_9;
+        row.appendChild(Biomass);
+        const water = document.createElement("td");
+        water.textContent = item.Waterkracht_11;
+        row.appendChild(water);
+        const wind = document.createElement("td");
+        wind.textContent = item.WindenergieTotaal_12;
+        row.appendChild(wind);
+        const solar = document.createElement("td");
+        solar.textContent = item.Zonnestroom_15;
+        row.appendChild(solar);
+
+        tableBody.appendChild(row);
+    });
+}
+
+
+function createenergyProdChart(data) {
+    const labels = data.map(item => item.Perioden);
+    const fossilFuel = data.map(item => parseFloat(item.Fossil_fuel));
+    const susEnergy = data.map(item => parseFloat(item.Sust_energy));
+    const ctx = document.getElementById('energyProdChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {label: 'Fossil Fuel', data: fossilFuel, fill: false,
+                    borderColor: 'rgb(75, 192, 192)', tension: 0.1, pointRadius: 1, pointHoverRadius: 8,},
+                {label: 'Sustainable energy', data: susEnergy, fill: false,
+                    borderColor: 'rgb(255, 99, 132)', tension: 0.1, pointRadius: 1, pointHoverRadius: 8,}
+
+        ]
+        },
+        options: {
+            responsive: true,
+            plugins: {legend: { display: true }},
+            scales: {
+                x: {title: {display: false, text: 'Period'}, 
+                    ticks: {maxTicksLimit: 6, autoSkip: true, }  
+                },
+                y: {title: {display: true, text: 'Energy in KWH'}}
+            }
+        }
+    });
+}
+
+
+export async function energyProd_fetchTypedDataSet(years, html_table, metaTable) {
+    const typedDataSetUrl = getTypedDataSetUrl_energyProd(years, metaTable);
+    const tableInfosUrl = metaTable.value.find(entity => entity.name === 'TableInfos').url;
+    try {const [typedDataResponse, tableInfosResponse] = await Promise.all([
+            fetch(typedDataSetUrl, { method: 'GET', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' } }),
+            fetch(tableInfosUrl, { method: 'GET', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' } })
+        ]);
+        if (!typedDataResponse.ok || !tableInfosResponse.ok) throw new Error('HTTP error fetching data');
+        
+        const typedData = await typedDataResponse.json();
+        const tableInfosData = await tableInfosResponse.json();
+
+        const modifiedDate = tableInfosData.value.length > 0 ? tableInfosData.value[0].Modified : 'Not Available';
+        const filteredData = typedData.value
+            .filter(item => 
+                !item.Perioden.endsWith('00') &&
+                !(item.Perioden.charAt(4) === 'K') &&
+                !(item.Perioden.charAt(4) === 'J'))
+            .reverse()
+            .slice(0,12)
+            .map(item => {item.Perioden = item.Perioden.replace(/MM/, '_');
+                // Calculate the rate% and add it as a new property
+                if (item.Kolen_6 && item.Olieproducten_7 && item.OverigeBrandstoffenNietHernieuwbaar_10) {
+                    item["Fossil_fuel"] = item.Kolen_6 + item.Olieproducten_7 + item.OverigeBrandstoffenNietHernieuwbaar_10
+                    // const rate = (item.TotaleBevolkingsgroei_7 / item.BevolkingAanHetBeginVanDePeriode_1) * 100;
+                    // item["Rate_growth"] = `${rate.toFixed(3)}%`; // Round to 3 decimals and append '%'
+                } else {
+                    item["Fossil_fuel"] = null; 
+                }
+                if (item.Biomassa_9 && item.Waterkracht_11 && item.WindenergieTotaal_12 && item.Zonnestroom_15) {
+                    item["Sust_energy"] = item.Biomassa_9 + item.Waterkracht_11 + item.WindenergieTotaal_12 + item.Zonnestroom_15
+                } else {
+                    item["Sust_energy"] = null; 
+                }
+
+                return item;
+            });
+        const periods = energyProd_populateTable(filteredData, html_table, modifiedDate);
+        createenergyProdChart(filteredData.reverse());
+    } catch (error) {
+        console.error('Error fetching TypedDataSet:', error);
+    }
+}
