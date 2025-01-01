@@ -403,6 +403,71 @@
             </div>    
         </div>
 
+        <!-- R6-->
+        <div class="row custom-gutter">
+            <!-- energy production -->
+            <div class="col-lg-6 col-sm-12 mb-1">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h1 class="card-title" data-toggle="tooltip" 
+                            title="Energy production breakdown">
+                            Energy production</h1>
+                        <p id="energyProd_mod" class="card-text" style="margin-bottom: 0;"></p>
+                        <p class="card-text" style="margin-top: 0px;">Index base:</p>
+                        <canvas id="energyProdChart" style="margin-bottom: 15px"></canvas>
+                        <div class="table-responsive">
+                            <table id="energyProdTable" class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Period</th>
+                                        <th>Total Energy production</th>
+                                        <th>Fossil fuels</th> <!-- kolen, olieproducten, overige niet herniewbaar -->
+                                        <th>Natural gas</th>
+                                        <th>bio-mass</th>
+                                        <th>Waterpower</th>
+                                        <th>Wind</th>
+                                        <th>Solar</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- tourism -->
+            <!-- <div class="col-lg-6 col-sm-12 mb-1">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h1 class="card-title" data-toggle="tooltip" 
+                            title="Monthly number of overnight stays in all hotels, motels, pensions, B&B, youth accomodations with at least 5 sleep spaces">
+                            Tourism overnight stays</h1>
+                        <p id="stayTourism_mod" class="card-text" style="margin-bottom: 0;"></p>
+                        <p class="card-text" style="margin-top: 0px;">Index base:</p>
+                        <canvas id="stayTourismChart" style="margin-bottom: 15px"></canvas>
+                        <div class="table-responsive">
+                            <table id="stayTourismTable" class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Period</th>
+                                        <th>Total stays</th>
+                                        <th>(%) in Amsterdam</th>
+                                        <th>Domestic</th>
+                                        <th>Europe</th>
+                                        <th>Americas</th>
+                                        <th>Asia</th>
+                                        <th>Oceania</th>
+                                        <th>Africa</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>     -->
+        </div>
+
     </div>
     
     
@@ -539,6 +604,17 @@
                 { "name": "Perioden", "url": "https://opendata.cbs.nl/ODataApi/odata/82061NED/Perioden" }
             ]};
 
+        const energy_metadata = {"odata.metadata": "https://opendata.cbs.nl/ODataApi/OData/84575NED/$metadata",
+            "value": [
+                { "name": "TableInfos", "url": "https://opendata.cbs.nl/ODataApi/odata/84575NED/TableInfos" },
+                { "name": "UntypedDataSet", "url": "https://opendata.cbs.nl/ODataApi/odata/84575NED/UntypedDataSet" },
+                { "name": "TypedDataSet", "url": "https://opendata.cbs.nl/ODataApi/odata/84575NED/TypedDataSet" },
+                { "name": "DataProperties", "url": "https://opendata.cbs.nl/ODataApi/odata/84575NED/DataProperties" },
+                { "name": "CategoryGroups", "url": "https://opendata.cbs.nl/ODataApi/odata/84575NED/CategoryGroups" },
+                { "name": "Perioden", "url": "https://opendata.cbs.nl/ODataApi/odata/84575NED/Perioden" }
+            ]};
+
+
 
 
         
@@ -578,10 +654,12 @@
             const currentDate = new Date();
             const currentYear = currentDate.getFullYear().toString();
             const lastYear = (currentDate.getFullYear() - 1).toString();
+            const last2Year = (currentDate.getFullYear() - 2).toString();
             const currentMonth = currentDate.getMonth(); // January is month 0
-            return currentMonth === 0 ? [`${currentYear}`] : [`${currentYear}`, `${lastYear}`];
+            return currentMonth === 0 ? [`${currentYear}`, `${lastYear}`, `${last2Year}`] : [`${currentYear}`, `${lastYear}`];
         }
         const yearArray = getYearArray();
+        console.log(yearArray)
 
 
         function formatDate(isoDateString) {
@@ -597,9 +675,9 @@
 
 
         // testin ggettig the data sets  
-        // const typedDataSetUrl = `${Service_industry_metadata.value.find(entity => entity.name === 'TypedDataSet').url}?$top=100`;
-        // const typedDataSetUrl = `${hotelTourism_metadata.value.find(entity => entity.name === 'TypedDataSet').url}?$top=100&$filter=startswith(Perioden, '2024')`;
-        const typedDataSetUrl = `${hotelTourism_metadata.value.find(entity => entity.name === 'TypedDataSet').url}?$top=100&$filter=startswith(Perioden, '2024') and WoonlandVanGasten eq 'T001047'`;
+        // const typedDataSetUrl = `${energy_metadata.value.find(entity => entity.name === 'TypedDataSet').url}?$top=100`;
+        const typedDataSetUrl = `${energy_metadata.value.find(entity => entity.name === 'TypedDataSet').url}?$top=100&$filter=startswith(Perioden, '2024')`;
+        // const typedDataSetUrl = `${energy_metadata.value.find(entity => entity.name === 'TypedDataSet').url}?$top=100&$filter=startswith(Perioden, '2024') and WoonlandVanGasten eq 'T001047'`;
         fetch(typedDataSetUrl, {
             method: 'GET',
             headers: {
